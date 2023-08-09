@@ -1,0 +1,61 @@
+{
+    "cliente": "CLIENTE",
+    "criar_pasta": "S", //S ou N. Se for N, os dashboards são inseridos na pasta existe ou atualizados caso já existam
+    "dashboards": [
+        {
+            "ARLD00000": [ // Administração de Rede Longa Distância
+                ["ARLD00100", "MapaVisaoGeralPortalMODELO"], // Gerência Rede
+                ["ARLD00200", "TopologiaWANPortalMODELO"], //Topologia
+                ["ARLD00300", /*Informações Circuitos e Roteadores*/ ["InformacoesCircuitosRoteadoresMODELO" /*Diário*/, "IndicadoresDesempenhoWANNacionalMODELO" /*Mensal*/]],
+                ["ARLD00400", "OcupacaoBandaTrimestralMODELO"] //Alta Utilização Persistente
+            ]
+        },
+        {
+            "ARL00000": [ // Administração de Rede Local
+                ["ARL00100", "TopologiaLANPortalMODELO"], //Topologia
+                ["ARL00200", "GerenciaWIFIPortalMODELO"] //Wifi
+            ]
+        },
+        {
+            "INF00000": [ // Infovia
+                ["INF00100", "DisponibilidadeInfoviaMODELO"] //Monitoração
+            ]
+        },
+        {
+            "ING00000": [ // Informações Gerenciais
+                {
+                    "ING00100": [ //Ambiente
+                        ["ING00106", "CertificadoDigitalPlanilhaXLSMODELO"], // Certificado Digital Planilha
+                        ["ING00101", "RelatorioPDFMODELO"], // Datacenter
+                        ["ING00102", "RelatorioPDFMODELO"], //Infovia
+                        ["ING00103", "RelatorioPDFLANMODELOJURIS"], //Lan
+                        ["ING00104", "RelatorioPDFMODELO"], //Lan
+                        ["ING00105", "RelatorioPDFMODELO"] //Wan
+                    ]
+                },
+                {
+                    "ING00300": [ //Documentos
+                        ["ING00300", "InformativoPDFMODELO"], //Informativo
+                        ["ING00301", "DocumentosPDFMODELO"], // Manuais
+                        ["ING00302", "DocumentosPDFMODELO"] // Modelos Tecnológicos
+                    ]
+                },
+                {
+                    "ING00400": "PlantaInstaladaMODELO" //Planta Instalada
+                },
+                {
+                    "ING00500": [ //Segurança
+                        ["ING00501", "RelatorioPDFMODELO"], // AntiDDOS
+                        ["ING00502", "RelatorioPDFMODELO"], // FIREWALL
+                        ["ING00503", "RelatorioPDFMODELO"] // IPS
+                    ]
+                }
+            ]
+        },
+        {
+            "MDP00000": [ // Monitoração por Demanda
+                ["MPD00100", "MonitoracaoDemandaMODELO"] // Painel 1
+            ]
+        }
+    ]
+}

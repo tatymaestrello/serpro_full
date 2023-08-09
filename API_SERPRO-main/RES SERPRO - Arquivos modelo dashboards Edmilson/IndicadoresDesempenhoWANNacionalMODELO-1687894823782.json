@@ -1,0 +1,413 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GDP_SUPCD",
+      "label": "GDP_SUPCD",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.4"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Menu Portal Serviços",
+      "tooltip": "",
+      "type": "link",
+      "url": "d/MenuPortalMODELO/menuportalmodelo?orgId=1"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "center",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Vel. (Kbps)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Tipo"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Interface"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 180
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Média Rx %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 70
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": -1000,
+                      "result": {
+                        "index": 0,
+                        "text": "n/c"
+                      },
+                      "to": -0.0009
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Média Tx %"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "basic",
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "red",
+                      "value": 70
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "from": -1000,
+                      "result": {
+                        "index": 0,
+                        "text": "n/c"
+                      },
+                      "to": -0.0009
+                    },
+                    "type": "range"
+                  }
+                ]
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Propagação (ms)"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 160
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Rede"
+            },
+            "properties": [
+              {
+                "id": "custom.align",
+                "value": "left"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "",
+                    "url": "d/InformacoesCircuitosRoteadoresMODELO/informacoescircuitosroteadoresmodelo?orgId=1&var-uf=${__data.fields.UF}&var-localidade=${__data.fields.Rede}&var-link=d/IndicadoresDesempenhoWANNacionalMODELO/indicadoresdesempenhowannacionalmodelo?orgId=1&var-circuito=${__data.fields.Tipo}&var-interface=${__data.fields.Interface}"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "UF"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "select distinct uf as \"UF\", ponto as \"Rede\",velocidade as \"Vel. (Kbps)\",tipo as \"Tipo\",interface as \"Interface\",entrada as \"Média Rx %\", saida as \"Média Tx %\",case when propagacao < 0 then 'n/c' else propagacao::numeric(5,2)::text end as \"Propagação (ms)\" from ( \r\n  select distinct uf,ponto,velocidade,tipo,interface,avg(entrada) over (partition by ponto,interface) as entrada,avg(saida) over (partition by ponto,interface) as saida, avg(propagacao::float) over (partition by ponto,interface) as propagacao, ans from (\r\n   select i.uf as uf, p.nome as ponto, r.kbps as velocidade, r.tipo as tipo, r.iface as interface, \r\n      ((i.e08::float+i.e12::float+i.e14::float)/3)::numeric(5,2) as entrada, \r\n      ((i.s08::float+i.s12::float+i.s14::float)/3)::numeric(5,2) as saida,\r\n      case when ((i.link = 'T') and (r.tipo = 'ACESSO')) then '150' when ((i.link = 'S') and (r.tipo = 'ACESSO')) then '750' else '' end as ans,  \r\n      i.propagacao::float as propagacao\r\n    from indicadores_desempenho_gtic i, ponto p, rede r where \r\n           (upper(p.hostname),upper(i.hostname), upper(r.hostname)) = (upper(i.hostname), upper(r.hostname),upper(p.hostname))\r\n      and r.iface = i.interface \r\n      and i.cliente = 'MODELO' \r\n      and i.data::text ~ '$referencia'\r\n      and r.tipo ~ '^(ACESSO|WANM)'\r\n      --and i.uf = 'AC'\r\n      and p.hostname ~ '^(${uf:pipe})'\r\n      and extract(isodow from data) < 6\r\n  ) t\r\n) t",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Relatório Indicadores WAN - Referência $referencia",
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "select uf from utilizacaoelipsemodelo where cliente ~* 'MODELO' order by uf",
+        "hide": 0,
+        "includeAll": true,
+        "label": "UF",
+        "multi": true,
+        "name": "uf",
+        "options": [],
+        "query": "select uf from utilizacaoelipsemodelo where cliente ~* 'MODELO' order by uf",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "select distinct to_char(data,'yyyy-mm') from indicadores_desempenho_gtic where cliente = 'MODELO' order by 1 desc\n",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Referência",
+        "multi": false,
+        "name": "referencia",
+        "options": [],
+        "query": "select distinct to_char(data,'yyyy-mm') from indicadores_desempenho_gtic where cliente = 'MODELO' order by 1 desc\n",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "",
+  "title": "IndicadoresDesempenhoWANNacionalMODELO",
+  "uid": "IndicadoresDesempenhoWANNacionalMODELO",
+  "version": 1,
+  "weekStart": ""
+}

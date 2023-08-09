@@ -1,0 +1,1054 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_DB_2_ZBX_UNICO",
+      "label": "DB_2_ZBX_UNICO",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    },
+    {
+      "name": "DS_GDP_SUPCD",
+      "label": "GDP_SUPCD",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.4"
+    },
+    {
+      "type": "panel",
+      "id": "marcuscalidus-svg-panel",
+      "name": "SVG",
+      "version": "0.3.4"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Menu Portal Serviço",
+      "tooltip": "",
+      "type": "link",
+      "url": "d/MenuPortalMODELO/menuportalmodelo?orgId=1"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_DB_2_ZBX_UNICO}"
+      },
+      "description": "",
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "id": 2,
+      "js_code": "// jshint strict: false\n// +------------------------------------------------------------------------------------+\n// | Mesmo o script funcionando é exibido um aviso de:                                  |\n// | too many erros                                                                     |\n// | A linha acima exclui o aviso de erro                                               |\n// | https://forum.processing.org/two/discussion/15717/alert-too-many-erros-xx-scanned  |\n// +------------------------------------------------------------------------------------+\n\n// +--------------------------------------------------------+\n// | SVG gerado pelo programa GeraTopologiaSVGLAN.pl        |\n// | Maquina WEB -> /srv/www/cgi-bin/Opgdr/Topologia        |\n// +--------------------------------------------------------+\n\nvar qtd = 69;       // Quantidade de Servidores/Switches definidas no GeraTopologiaSVGLAN.pl\nvar id;\n\nfor (var i=2; i<=qtd; i++) {\n\n        //Apagando todos os objetos (servidores, switches e linhas)\n\n        id = \"conexaoeqpto\" + i;\n        document.getElementById(id).style.display = \"none\";\n        id = \"servico\" + i;\n        document.getElementById(id).style.display = \"none\";\n        id = \"alarme\" + i;\n        document.getElementById(id).style.display = \"none\";\n        id = \"textalarme\" + i;\n        document.getElementById(id).style.display = \"none\";        \n    \n}\n\nid = \"acelerador\";\ndocument.getElementById(id).style.display = \"none\";\nid = \"textoacelerador\";\ndocument.getElementById(id).style.display = \"none\";\nid = \"ipacelerador\";\ndocument.getElementById(id).style.display = \"none\";\n\nvar alias; var alarme = {}; var alarmewan;\nvar pos = 1;\nvar switchcentral;\nvar ipcentral;\nvar tipocentral;\nvar nomecentral;\nvar acelerador;\nvar ipacelerador;\nvar text = {};\nvar descricaofalha = {};\nvar descricaofalhawan;\nvar colorrouter = \"#4EA306\";\n\nvar host = {}; var ip = {}; var tipo = {}; var nome = {};\n\nvar link = \"#\";\n\nctrl.data.forEach((item) => {\n\n    let valor = item.datapoints.map((d) => d[0]);\n    \n    // +--------------------------------------+\n    // | Armazenando os HOSTs - CONSULTA A    |\n    // +--------------------------------------+\n    if (item.alias == \"DADOS\") {\n        //alert(valor);\n        for (let i=0;i<valor.length;i++) {\n\n            let dados = String(valor[i]).split(\"___\");\n            \n            // Identificando o SWITCH CENTRAL\n            if ((dados[1] == 1) && (switchcentral === undefined)) {\n                \n                switchcentral = dados[0];\n                tipocentral = dados[2].toLowerCase();\n                ipcentral = dados[3];\n                nomecentral = dados[4];\n                \n                //pos++;\n                \n            } else if ((switchcentral === undefined) && (dados[2] == \"switch\")) {\n                // Se nao tiver switch central pega o proximo switch com central \n                switchcentral = dados[0];\n                tipocentral   = dados[2].toLowerCase();\n                ipcentral     = dados[3];\n                nomecentral   = dados[4];\n                \n                //pos++;\n                \n            } else {\n\n                /* define o texto do tipo de equipamento\n                    SV -> servidor      AP -> access points     SW -> switch\n                */\n                if (dados[2].toLowerCase() == 'servidor') {\n                    text[dados[0]] = \"SV\";\n                } else if ((dados[2].toLowerCase() == 'ap') || (dados[2].toLowerCase() == 'access point')) {\n                    text[dados[0]] = \"AP\";\n                } else {\n                    text[dados[0]] = \"SW\";\n                }\n                \n                /* define o texto do tipo de equipamento\n                    DC -> domain controller     SR -> servidor rede\n                */                \n                if (dados[1] == 2) {\n                    text[dados[0]] = \"DC\";\n                } else if (dados[1] == 3) {\n                    text[dados[0]] = \"SR\";\n                }    \n                \n                host[dados[0]] = dados[0];\n                \n                tipo[dados[0]] = dados[2].toLowerCase();\n                ip[dados[0]]   = dados[3];\n                nome[dados[0]] = dados[4];\n            }\n            \n            \n        }    \n    }\n\n    // +--------------------------------------+\n    // | Armazenando ALARMES - CONSULTA B     |\n    // +--------------------------------------+\n    if (item.alias === \"RILAN\") {\n\n        for (let key in valor) {\n                    \n            let info = valor[key].split('|'); \n            \n            for (let i=0;i<info.length;i++) {\n                \n                \n                if (info[i] !== '') {\n                    let dados = info[i].split('__');\n\n                    if (dados[3].match(\"RI_\")) {\n                    \n                        alarme[dados[0]] = dados[1];\n                        descricaofalha[dados[0]] = 'Falha: '+dados[2] + '\\nChamado: '+dados[3] + '\\nData: ' +dados[4];\n                    } else if (alarme[dados[0]] === undefined) {\n                    \n                        alarme[dados[0]] = dados[1];\n                        descricaofalha[dados[0]] = 'Falha: '+dados[2] + '\\nChamado: Sem informação RI' + '\\nData: ' +dados[4];\n                    }\n                }\n            \n            }\n        }        \n    }\n    \n    // +--------------------------------------+\n    // | Armazenando REDE   -     CONSULTA C  |\n    // +--------------------------------------+\n    if (item.alias == \"ALIAS\") {\n        //alert(valor + \"---\" + item.alias);\n        alias = valor;\n    }\n    \n    // +--------------------------------------+\n    // | Armazenando ALARMES - CONSULTA D     |\n    // +--------------------------------------+\n    if (item.alias === \"RIWAN\") {\n\n        for (let key in valor) {\n                    \n            let info = valor[key].split('|'); \n            \n            for (let i=0;i<info.length;i++) {\n\n                if (info[i] !== '') {\n                    let dados = info[i].split('__');\n                    \n                    if (dados[3].match(\"RI_\")) {\n                        \n                        descricaofalhawan = \"\\nFalha(s):\\n\"+dados[3]  + \" - \" + dados[2];\n                        alarmewan = dados[1];\n                    } else if ( (!dados[3].match(\"RI_\") &&  descricaofalhawan === '' )) {\n                        descricaofalhawan = \"\\nFalha(s):\\n\"+dados[3]  + \" - \" + dados[2];\n                        alarmewan = dados[1];\n                    }\n                    colorrouter = \"#FF0000\";\n                }\n                \n\n            }\n        }\n    }   \n    \n    \n});\n\n//alert(descricaofalha[\"RF0818000092387\"])\n// Inserindo textos dos componentes fixos (roteador e switch central)\n\nid = \"textorouter\";\ndocument.getElementById(id).textContent = alias;\nid = \"textoswitch1\";\ndocument.getElementById(id).style.display = \"block\";\ndocument.getElementById(id).textContent = switchcentral;\nid = \"ipswitch1\";\ndocument.getElementById(id).style.display = \"block\";\ndocument.getElementById(id).textContent = ipcentral;\n\n/*\nif (acelerador !== undefined) {\n    id = \"acelerador\";\n    document.getElementById(id).style.display = \"block\";\n\n    id = \"textoacelerador\";\n    document.getElementById(id).style.display = \"block\";\n    document.getElementById(id).textContent = acelerador;\n\n    id = \"ipacelerador\";\n    document.getElementById(id).style.display = \"block\";\n    document.getElementById(id).textContent = ipacelerador;    \n}\n*/\n\n\n// Colorindo o Router\nid = \"router\";\nvar routerElement = document.getElementById(id);\nrouterElement.setAttribute(\"fill\",colorrouter);\n//alert(colorrouter);\n\n\n// Forca alarme do switch para 5\nif (alarmewan == 5) {\n    alarme[switchcentral] = 5;\n}\n\npos = 2;            // contador dos IDs dos objetos\nfor (let key in tipo) {\n    \n    id = \"servico\"+pos;\n    document.getElementById(id).textContent = host[key].toUpperCase() ;\n    document.getElementById(id).style.display = \"block\";\n    //alert(host[key]+\" \"+tipo[key]+\" \"+ip[key]+\" \"+nome[key]);\n    \n    id = \"conexaoeqpto\"+pos;\n    document.getElementById(id).style.display = \"block\";\n\n    id = \"textalarme\"+pos;\n    document.getElementById(id).style.display = \"block\";\n    document.getElementById(id).textContent = text[key];\n\n\n\n    if (alarme[switchcentral] != 5) {\n        // Colorindo as cores dos ALARMES\n        if (alarme[host[key]] !== undefined)  {\n        \n            id = \"alarme\"+pos;\n            let cor;\n       \n            if (alarme[host[key]] == 4) {\n                cor = \"#FFFF00\";\n            } else if (alarme[host[key]] == 5) {\n                cor = \"#FF0000\";\n            }\n        \n            document.getElementById(id).style.display = \"block\";\n            let svgElement = document.getElementById(id);\n            svgElement.setAttribute(\"fill\",cor);    \n        \n        } else {\n            id = \"alarme\"+pos;\n            document.getElementById(id).style.display = \"block\";\n            let svgElement = document.getElementById(id);\n            svgElement.setAttribute(\"fill\",\"#00FF00\");\n        }    \n    } else {\n        id = \"alarme\"+pos;\n        document.getElementById(id).style.display = \"block\";\n        let svgElement = document.getElementById(id);\n        svgElement.setAttribute(\"fill\",\"#CCCCCC\");        \n    }\n\n\n    id = \"titlealarme\"+pos;\n    if (descricaofalha[key] === undefined) {\n        document.getElementById(id).textContent = \"Nome: \"+nome[key] +\"\\n\"+ \"Hostname: \"+host[key] +\"\\n\"+ \"Ip: \"+ip[key] +\"\\n\"+ \"Tipo: \"+tipo[key];\n    } else {\n        document.getElementById(id).textContent = \"Nome: \"+nome[key] +\"\\n\"+ \"Hostname: \"+host[key] +\"\\n\"+ \"Ip: \"+ip[key] +\"\\n\"+ \"Tipo: \"+tipo[key] + \"\\n\" + descricaofalha[key];\n    }\n    \n    //id = \"linkalarme\"+pos;\n        \n    //let svgElement = document.getElementById(id);\n    //svgElement.setAttribute(\"href\",link+host[key]); \n\n \n    \n    pos+=1;\n}\n\n// Ajustes do Switch Central\n//alert(alarme[switchcentral]+\"---\"+switchcentral);\n\nlet cor;\n\nif (alarmewan == 5) {\n    cor = \"#CCCCCC\";\n} else if (alarme[switchcentral] == 4) {\n    cor = \"#FFFF00\";\n} else if (alarme[switchcentral] == 5) {\n    cor = \"#FF0000\";\n} else {\n    cor = \"#4EA306\";\n}\n\nif (nomecentral === undefined) {\n    nomecentral = \"n/c\";\n    switchcentral = \"n/c\";\n    ipcentral = \"n/c\";\n    tipocentral = \"n/c\";\n    cor = \"#CCCCCC\";\n    \n}        \n    \n//document.getElementById(\"alarme1\").style.display = \"block\";\nlet svgElement = document.getElementById(\"switch1\");    \nsvgElement.setAttribute(\"fill\",cor);\n\n//svgElement = document.getElementById(\"linkswitch1\");\n//svgElement.setAttribute(\"href\",link+switchcentral);\n\nid = \"titleswitch1\";\nif (descricaofalha[switchcentral] === undefined) {\n    document.getElementById(id).textContent = \"Nome: \"+nomecentral +\"\\n\"+ \"Hostname: \"+switchcentral +\"\\n\"+ \"Ip: \"+ipcentral +\"\\n\"+ \"Tipo: \"+tipocentral;\n} else {\n    document.getElementById(id).textContent = \"Nome: \"+nomecentral +\"\\n\"+ \"Hostname: \"+switchcentral +\"\\n\"+ \"Ip: \"+ipcentral +\"\\n\"+ \"Tipo: \"+tipocentral + \"\\n\" + descricaofalha[switchcentral];\n}\n\nid = \"titlerouter\";\nif (descricaofalhawan !== undefined) {\n    \n    let svgElement = document.getElementById(\"titlerouter\");\n    document.getElementById(id).textContent = descricaofalhawan;\n} else {\n    document.getElementById(id).textContent = \"\";\n}",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "repositories": {
+        "rtmaster": {
+          "description": "simple examples",
+          "items": [
+            {
+              "category": "arrows",
+              "description": "Arrow facing up",
+              "name": "arrow-up",
+              "path": "rtmaster/arrows/arrow-up.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down",
+              "name": "arrow-down",
+              "path": "rtmaster/arrows/arrow-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing right",
+              "name": "arrow-right",
+              "path": "rtmaster/arrows/arrow-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left",
+              "name": "arrow-left",
+              "path": "rtmaster/arrows/arrow-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up right",
+              "name": "arrow-up-right",
+              "path": "rtmaster/arrows/arrow-up-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up left",
+              "name": "arrow-up-left",
+              "path": "rtmaster/arrows/arrow-up-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down left",
+              "name": "arrow-down-left",
+              "path": "rtmaster/arrows/arrow-down-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down right",
+              "name": "arrow-down-right",
+              "path": "rtmaster/arrows/arrow-down-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left right",
+              "name": "arrow-left-right",
+              "path": "rtmaster/arrows/arrow-left-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down",
+              "name": "arrow-up-down",
+              "path": "rtmaster/arrows/arrow-up-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down left right",
+              "name": "arrow-up-down-left-right",
+              "path": "rtmaster/arrows/arrow-up-down-left-right.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Factory",
+              "name": "factory",
+              "path": "rtmaster/facilities/factory.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Jackup",
+              "name": "jackup",
+              "path": "rtmaster/facilities/jackup.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Plant",
+              "name": "plant",
+              "path": "rtmaster/facilities/plant.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Semisub",
+              "name": "semisub",
+              "path": "rtmaster/facilities/semisub.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Ship",
+              "name": "ship",
+              "path": "rtmaster/facilities/ship.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Truck",
+              "name": "truck",
+              "path": "rtmaster/facilities/truck.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Light Bulb",
+              "name": "light-bulb",
+              "path": "rtmaster/indicators/light-bulb.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Green Light Indicator",
+              "name": "light-green",
+              "path": "rtmaster/indicators/light-green.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Orange Light Indicator",
+              "name": "light-orange",
+              "path": "rtmaster/indicators/light-orange.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Red Light Indicator",
+              "name": "light-red",
+              "path": "rtmaster/indicators/light-red.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Compressor",
+              "name": "compressor",
+              "path": "rtmaster/industrial/compressor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Derrick",
+              "name": "derrick",
+              "path": "rtmaster/industrial/derrick.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Heat Exchanger",
+              "name": "heatexchanger",
+              "path": "rtmaster/industrial/heatexchanger.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Motor",
+              "name": "motor",
+              "path": "rtmaster/industrial/motor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Pump",
+              "name": "pump",
+              "path": "rtmaster/industrial/pump.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Tank",
+              "name": "tank-horizontal",
+              "path": "rtmaster/industrial/tank-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Tank",
+              "name": "tank-vertical",
+              "path": "rtmaster/industrial/tank-vertical.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Turbine",
+              "name": "turbine",
+              "path": "rtmaster/industrial/turbine.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Vessel",
+              "name": "vessel-horizontal",
+              "path": "rtmaster/industrial/vessel-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Vessel",
+              "name": "vessel-vertical",
+              "path": "rtmaster/industrial/vessel-vertical.svg"
+            },
+            {
+              "category": "letters",
+              "description": "A",
+              "name": "A",
+              "path": "rtmaster/letters/letter-a.svg"
+            },
+            {
+              "category": "letters",
+              "description": "B",
+              "name": "B",
+              "path": "rtmaster/letters/letter-b.svg"
+            },
+            {
+              "category": "letters",
+              "description": "C",
+              "name": "C",
+              "path": "rtmaster/letters/letter-c.svg"
+            },
+            {
+              "category": "letters",
+              "description": "D",
+              "name": "D",
+              "path": "rtmaster/letters/letter-d.svg"
+            },
+            {
+              "category": "letters",
+              "description": "E",
+              "name": "E",
+              "path": "rtmaster/letters/letter-e.svg"
+            },
+            {
+              "category": "letters",
+              "description": "F",
+              "name": "F",
+              "path": "rtmaster/letters/letter-f.svg"
+            },
+            {
+              "category": "letters",
+              "description": "G",
+              "name": "G",
+              "path": "rtmaster/letters/letter-g.svg"
+            },
+            {
+              "category": "letters",
+              "description": "H",
+              "name": "H",
+              "path": "rtmaster/letters/letter-h.svg"
+            },
+            {
+              "category": "letters",
+              "description": "I",
+              "name": "I",
+              "path": "rtmaster/letters/letter-i.svg"
+            },
+            {
+              "category": "letters",
+              "description": "J",
+              "name": "J",
+              "path": "rtmaster/letters/letter-j.svg"
+            },
+            {
+              "category": "letters",
+              "description": "K",
+              "name": "K",
+              "path": "rtmaster/letters/letter-k.svg"
+            },
+            {
+              "category": "letters",
+              "description": "L",
+              "name": "L",
+              "path": "rtmaster/letters/letter-l.svg"
+            },
+            {
+              "category": "letters",
+              "description": "M",
+              "name": "M",
+              "path": "rtmaster/letters/letter-m.svg"
+            },
+            {
+              "category": "letters",
+              "description": "N",
+              "name": "N",
+              "path": "rtmaster/letters/letter-n.svg"
+            },
+            {
+              "category": "letters",
+              "description": "O",
+              "name": "O",
+              "path": "rtmaster/letters/letter-o.svg"
+            },
+            {
+              "category": "letters",
+              "description": "P",
+              "name": "P",
+              "path": "rtmaster/letters/letter-p.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Q",
+              "name": "Q",
+              "path": "rtmaster/letters/letter-q.svg"
+            },
+            {
+              "category": "letters",
+              "description": "R",
+              "name": "R",
+              "path": "rtmaster/letters-letter-r.svg"
+            },
+            {
+              "category": "letters",
+              "description": "S",
+              "name": "S",
+              "path": "rtmaster/letters/letter-s.svg"
+            },
+            {
+              "category": "letters",
+              "description": "T",
+              "name": "T",
+              "path": "rtmaster/letters/letter-t.svg"
+            },
+            {
+              "category": "letters",
+              "description": "U",
+              "name": "U",
+              "path": "rtmaster/letters/letter-u.svg"
+            },
+            {
+              "category": "letters",
+              "description": "V",
+              "name": "V",
+              "path": "rtmaster/letters/letter-v.svg"
+            },
+            {
+              "category": "letters",
+              "description": "W",
+              "name": "W",
+              "path": "rtmaster/letters/letter-w.svg"
+            },
+            {
+              "category": "letters",
+              "description": "X",
+              "name": "X",
+              "path": "rtmaster/letters/letter-x.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Y",
+              "name": "Y",
+              "path": "rtmaster/letters/letter-y.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Z",
+              "name": "Z",
+              "path": "rtmaster/letters/letter-z.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Laboratory Flask",
+              "name": "flask",
+              "path": "rtmaster/meters/flask.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Flowmeter",
+              "name": "flowmeter",
+              "path": "rtmaster/meters/flowmeter.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Gauge",
+              "name": "gauge",
+              "path": "rtmaster/meters/gauge.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "0",
+              "name": "0",
+              "path": "rtmaster/numbers/number-0.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "1",
+              "name": "1",
+              "path": "rtmaster/numbers/number-1.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "2",
+              "name": "2",
+              "path": "rtmaster/numbers/number-2.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "3",
+              "name": "3",
+              "path": "rtmaster/numbers/number-3.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "4",
+              "name": "4",
+              "path": "rtmaster/numbers/number-4.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "5",
+              "name": "5",
+              "path": "rtmaster/numbers/number-5.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "6",
+              "name": "6",
+              "path": "rtmaster/numbers/number-6.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "7",
+              "name": "7",
+              "path": "rtmaster/numbers/number-7.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "8",
+              "name": "8",
+              "path": "rtmaster/numbers/number-8.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "9",
+              "name": "9",
+              "path": "rtmaster/numbers/number-9.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down",
+              "name": "pipe-curve-down",
+              "path": "rtmaster/pipes/pipe-curve-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down left",
+              "name": "pipe-curve-down-left",
+              "path": "rtmaster/pipes/pipe-curve-down-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down right",
+              "name": "pipe-curve-down-right",
+              "path": "rtmaster/pipes/pipe-curve-down-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve left",
+              "name": "pipe-curve-left",
+              "path": "rtmaster/pipes/pipe-curve-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve right",
+              "name": "pipe-curve-right",
+              "path": "rtmaster/pipes/pipe-curve-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up",
+              "name": "pipe-curve-up",
+              "path": "rtmaster/pipes/pipe-curve-up.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up left",
+              "name": "pipe-curve-up-left",
+              "path": "rtmaster/pipes/pipe-curve-up-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up right",
+              "name": "pipe-curve-up-right",
+              "path": "rtmaster/pipes/pipe-curve-up-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal left",
+              "name": "pipe-diagonal-left",
+              "path": "rtmaster/pipes/pipe-diagonal-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal right",
+              "name": "pipe-diagonal-right",
+              "path": "rtmaster/pipes/pipe-diagonal-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange horizontal",
+              "name": "pipe-flange-horizontal",
+              "path": "rtmaster/pipes/pipe-flange-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange intersection",
+              "name": "pipe-flange-intersection",
+              "path": "rtmaster/pipes/pipe-flange-intersection.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange vertical",
+              "name": "pipe-flange-vertical",
+              "path": "rtmaster/pipes/pipe-flange-vertical.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe horizontal",
+              "name": "pipe-horizontal",
+              "path": "rtmaster/pipes/pipe-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee down",
+              "name": "pipe-tee-down",
+              "path": "rtmaster/pipes/pipe-tee-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee left",
+              "name": "pipe-tee-left",
+              "path": "rtmaster/pipes/pipe-tee-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee right",
+              "name": "pipe-tee-right",
+              "path": "rtmaster/pipes/pipe-tee-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee up",
+              "name": "pipe-tee-up",
+              "path": "rtmaster/pipes/pipe-tee-up"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe vertical",
+              "name": "pipe-vertical",
+              "path": "rtmaster/pipes/pipe-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Circle",
+              "name": "circle",
+              "path": "rtmaster/shapes/circle.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Gear",
+              "name": "gear",
+              "path": "rtmaster/shapes/gear.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal",
+              "name": "line-horizontal",
+              "path": "rtmaster/shapes/line-horizontal.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow left",
+              "name": "line-horizontal-arrow-left",
+              "path": "rtmaster/shapes/line-horizontal-arrow-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow right",
+              "name": "line-horizontal-arrow-right",
+              "path": "rtmaster/shapes/line-horizontal-arrow-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical",
+              "name": "line-vertical",
+              "path": "rtmaster/shapes/line-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow down",
+              "name": "line-vertical-arrow-down",
+              "path": "rtmaster/shapes/line-vertical-arrow-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow up",
+              "name": "line-vertical-arrow-up",
+              "path": "rtmaster/shapes/line-vertical-arrow-up.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Square",
+              "name": "square",
+              "path": "rtmaster/shapes/square.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle down",
+              "name": "triangle-down",
+              "path": "rtmaster/shapes/triangle-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle left",
+              "name": "triangle-left",
+              "path": "rtmaster/shapes/triangle-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle right",
+              "name": "triangle-right",
+              "path": "rtmaster/shapes/triangle-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle-up",
+              "name": "triangle-up",
+              "path": "rtmaster/shapes/triangle-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve Horizontal",
+              "name": "valve-horizontal",
+              "path": "rtmaster/valves/valve-horizontal.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve left right",
+              "name": "valve-left-right",
+              "path": "rtmaster/valves/valve-left-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round down",
+              "name": "valve-round-down",
+              "path": "rtmaster/valves/valve-round-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round left",
+              "name": "valve-round-left",
+              "path": "rtmaster/valves/valve-round-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round right",
+              "name": "valve-round-right",
+              "path": "rtmaster/valves/valve-round-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round up",
+              "name": "valve-round-up",
+              "path": "rtmaster/valves/valve-round-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square down",
+              "name": "valve-square-down",
+              "path": "rtmaster/valves/valve-square-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square left",
+              "name": "valve-square-left",
+              "path": "rtmaster/valves/valve-square-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square right",
+              "name": "valve-square-right",
+              "path": "rtmaster/valves/valve-square-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square up",
+              "name": "valve-square-up",
+              "path": "rtmaster/valves/valve-square-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve vertical",
+              "name": "valve-vertical",
+              "path": "rtmaster/valves/valve-vertical"
+            }
+          ],
+          "license": "Apache 2.0",
+          "url": "https://github.com/rtmaster"
+        }
+      },
+      "svgBuilderData": {
+        "elements": [],
+        "height": "100%",
+        "viewport": {
+          "height": 1000,
+          "width": 1000,
+          "x": 0,
+          "y": 0
+        },
+        "width": "100%"
+      },
+      "svg_data": "\r\n<?xml version=\"1.0\"?>\r\n<svg viewBox=\"-10 20 1200 550\" baseprofile=\"tiny\" fill=\"none\" height=\"100%\" stroke=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" version=\"1.2\" width=\"100%\" xmlns=\"http://www.w3.org/2000/svg\">\r\n\r\n<text id=\"servico3\" x=\"546.79386760073\" y=\"502.823496222262\" fill=\"#cfcfcf\" transform=\"rotate(-83.3767326750645 546.79386760073,502.823496222262)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 3</text>\r\n<line id=\"conexaoeqpto3\" x1=\"544.913458774112\" y1=\"519.011729303746\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme3\" href=\"\" target=\"_self\"> -->\r\n    <text id=\"textalarme3\" x=\"544.913458774112\" y=\"523.011729303746\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\t\r\n\t<circle id=\"alarme3\" cx=\"544.913458774112\" cy=\"519.011729303746\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme3\"></title>\r\n\t</circle>\r\n\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico5\" x=\"505.625112770749\" y=\"500.47082425937\" fill=\"#cfcfcf\" transform=\"rotate(-73.9095370370679 505.625112770749,500.47082425937)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 5</text>\r\n<line id=\"conexaoeqpto5\" x1=\"501.000120288798\" y1=\"516.502212543328\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme5\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme5\" x=\"501.000120288798\" y=\"520.502212543328\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme5\" cx=\"501.000120288798\" cy=\"516.502212543328\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme5\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico7\" x=\"464.978559063912\" y=\"496.693195755144\" fill=\"#cfcfcf\" transform=\"rotate(-65.0716314428207 464.978559063912,496.693195755144)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 7</text>\r\n<line id=\"conexaoeqpto7\" x1=\"457.643796334839\" y1=\"512.47274213882\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme7\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme7\" x=\"457.643796334839\" y=\"516.47274213882\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme7\" cx=\"457.643796334839\" cy=\"512.47274213882\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme7\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico9\" x=\"425.095065523164\" y=\"491.512995780472\" fill=\"#cfcfcf\" transform=\"rotate(-57.0785794344866 425.095065523164,491.512995780472)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 9</text>\r\n<line id=\"conexaoeqpto9\" x1=\"415.101403224708\" y1=\"506.94719549917\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme9\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme9\" x=\"415.101403224708\" y=\"510.94719549917\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme9\" cx=\"415.101403224708\" cy=\"506.94719549917\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme9\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico11\" x=\"386.210969530337\" y=\"484.960920615711\" fill=\"#cfcfcf\" transform=\"rotate(-49.9978272068972 386.210969530337,484.960920615711)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 11</text>\r\n<line id=\"conexaoeqpto11\" x1=\"373.625034165692\" y1=\"499.958315323425\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme11\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme11\" x=\"373.625034165692\" y=\"503.958315323425\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme11\" cx=\"373.625034165692\" cy=\"499.958315323425\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme11\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico13\" x=\"348.556686343121\" y=\"477.075795853922\" fill=\"#cfcfcf\" transform=\"rotate(-43.791333625211 348.556686343121,477.075795853922)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 13</text>\r\n<line id=\"conexaoeqpto13\" x1=\"333.460465432662\" y1=\"491.547515577517\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme13\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme13\" x=\"333.460465432662\" y=\"495.547515577517\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme13\" cx=\"333.460465432662\" cy=\"491.547515577517\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme13\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico15\" x=\"312.355343724737\" y=\"467.904346332278\" fill=\"#cfcfcf\" transform=\"rotate(-38.3655762200168 312.355343724737,467.904346332278)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 15</text>\r\n<line id=\"conexaoeqpto15\" x1=\"294.845699973053\" y1=\"481.764636087763\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme15\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme15\" x=\"294.845699973053\" y=\"485.764636087763\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme15\" cx=\"294.845699973053\" cy=\"481.764636087763\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme15\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico17\" x=\"277.82145975707\" y=\"457.500919254976\" fill=\"#cfcfcf\" transform=\"rotate(-33.6084767601899 277.82145975707,457.500919254976)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 17</text>\r\n<line id=\"conexaoeqpto17\" x1=\"258.009557074208\" y1=\"470.667647205308\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme17\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme17\" x=\"258.009557074208\" y=\"474.667647205308\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme17\" cx=\"258.009557074208\" cy=\"470.667647205308\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme17\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico19\" x=\"245.159671672137\" y=\"445.927162148329\" fill=\"#cfcfcf\" transform=\"rotate(-29.4103184167976 245.159671672137,445.927162148329)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 19</text>\r\n<line id=\"conexaoeqpto19\" x1=\"223.170316450279\" y1=\"458.32230629155\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme19\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme19\" x=\"223.170316450279\" y=\"462.32230629155\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme19\" cx=\"223.170316450279\" cy=\"458.32230629155\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme19\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico21\" x=\"214.563523234453\" y=\"433.251657556384\" fill=\"#cfcfcf\" transform=\"rotate(-25.6730393245102 214.563523234453,433.251657556384)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 21</text>\r\n<line id=\"conexaoeqpto21\" x1=\"190.534424783417\" y1=\"444.801768060143\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme21\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme21\" x=\"190.534424783417\" y=\"448.801768060143\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme21\" cx=\"190.534424783417\" cy=\"444.801768060143\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme21\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico23\" x=\"186.214317859891\" y=\"419.549516641748\" fill=\"#cfcfcf\" transform=\"rotate(-22.3128795449773 186.214317859891,419.549516641748)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 23</text>\r\n<line id=\"conexaoeqpto23\" x1=\"160.295272383884\" y1=\"430.186151084532\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme23\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme23\" x=\"160.295272383884\" y=\"434.186151084532\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme23\" cx=\"160.295272383884\" cy=\"430.186151084532\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme23\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico25\" x=\"160.280044267103\" y=\"404.901934099815\" fill=\"#cfcfcf\" transform=\"rotate(-19.2598326878456 160.280044267103,404.901934099815)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 25</text>\r\n<line id=\"conexaoeqpto25\" x1=\"132.632047218243\" y1=\"414.562063039802\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme25\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme25\" x=\"132.632047218243\" y=\"418.562063039802\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme25\" cx=\"132.632047218243\" cy=\"414.562063039802\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme25\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico27\" x=\"136.914381027758\" y=\"389.395707023836\" fill=\"#cfcfcf\" transform=\"rotate(-16.4558472954667 136.914381027758,389.395707023836)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 27</text>\r\n<line id=\"conexaoeqpto27\" x1=\"107.708673096275\" y1=\"398.022087492091\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme27\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme27\" x=\"107.708673096275\" y=\"402.022087492091\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme27\" cx=\"107.708673096275\" cy=\"398.022087492091\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme27\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico29\" x=\"116.255785914346\" y=\"373.122720571903\" fill=\"#cfcfcf\" transform=\"rotate(-13.852735195272 116.255785914346,373.122720571903)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 29</text>\r\n<line id=\"conexaoeqpto29\" x1=\"85.6728383086354\" y1=\"380.664235276696\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme29\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme29\" x=\"85.6728383086354\" y=\"384.664235276696\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme29\" cx=\"85.6728383086354\" cy=\"380.664235276696\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme29\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico31\" x=\"98.4266754417694\" y=\"356.179403483607\" fill=\"#cfcfcf\" transform=\"rotate(-11.4101981961235 98.4266754417694,356.179403483607)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 31</text>\r\n<line id=\"conexaoeqpto31\" x1=\"66.6551204712207\" y1=\"362.591363715847\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme31\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme31\" x=\"66.6551204712207\" y=\"366.591363715847\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme31\" cx=\"66.6551204712207\" cy=\"362.591363715847\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme31\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico33\" x=\"83.5326994645273\" y=\"338.666156672826\" fill=\"#cfcfcf\" transform=\"rotate(-9.09411306853832 83.5326994645273,338.666156672826)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 33</text>\r\n<line id=\"conexaoeqpto33\" x1=\"50.7682127621624\" y1=\"343.910567117681\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme33\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme33\" x=\"50.7682127621624\" y=\"347.910567117681\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme33\" cx=\"50.7682127621624\" cy=\"343.910567117681\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme33\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico35\" x=\"71.6621151279948\" y=\"320.686758282627\" fill=\"#cfcfcf\" transform=\"rotate(-6.87509151493266 71.6621151279948,320.686758282627)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 35</text>\r\n<line id=\"conexaoeqpto35\" x1=\"38.1062561365278\" y1=\"324.732542168136\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme35\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme35\" x=\"38.1062561365278\" y=\"328.732542168136\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme35\" cx=\"38.1062561365278\" cy=\"324.732542168136\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme35\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico37\" x=\"62.8852638835807\" y=\"302.347748727732\" fill=\"#cfcfcf\" transform=\"rotate(-4.72728212196756 62.8852638835807,302.347748727732)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 37</text>\r\n<line id=\"conexaoeqpto37\" x1=\"28.7442814758194\" y1=\"305.170931976248\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme37\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme37\" x=\"28.7442814758194\" y=\"309.170931976248\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme37\" cx=\"28.7442814758194\" cy=\"305.170931976248\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme37\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico39\" x=\"57.2541546668036\" y=\"283.757799368617\" fill=\"#cfcfcf\" transform=\"rotate(-2.62736546782798 57.2541546668036,283.757799368617)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 39</text>\r\n<line id=\"conexaoeqpto39\" x1=\"22.7377649779238\" y1=\"285.341652659858\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme39\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme39\" x=\"22.7377649779238\" y=\"289.341652659858\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme39\" cx=\"22.7377649779238\" cy=\"285.341652659858\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme39\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico41\" x=\"54.8021557082507\" y=\"265.027068558271\" fill=\"#cfcfcf\" transform=\"rotate(-0.553691915277459 54.8021557082507,265.027068558271)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 41</text>\r\n<line id=\"conexaoeqpto41\" x1=\"20.1222994221341\" y1=\"265.362206462155\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme41\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme41\" x=\"20.1222994221341\" y=\"269.362206462155\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme41\" cx=\"20.1222994221341\" cy=\"265.362206462155\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme41\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico43\" x=\"55.5437968036516\" y=\"246.266548877495\" fill=\"#cfcfcf\" transform=\"rotate(1.51448520148005 55.5437968036516,246.266548877495)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 43</text>\r\n<line id=\"conexaoeqpto43\" x1=\"20.9133832572284\" y1=\"245.350985469328\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme43\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme43\" x=\"20.9133832572284\" y=\"249.350985469328\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme43\" cx=\"20.9133832572284\" cy=\"245.350985469328\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme43\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico45\" x=\"59.4746832147526\" y=\"227.587409426825\" fill=\"#cfcfcf\" transform=\"rotate(3.59772453805035 59.4746832147526,227.587409426825)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 45</text>\r\n<line id=\"conexaoeqpto45\" x1=\"25.1063287624028\" y1=\"225.42657005528\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme45\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme45\" x=\"25.1063287624028\" y=\"229.42657005528\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme45\" cx=\"25.1063287624028\" cy=\"225.42657005528\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme45\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico47\" x=\"66.5715217111921\" y=\"209.10033707245\" fill=\"#cfcfcf\" transform=\"rotate(5.71710088948269 66.5715217111921,209.10033707245)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 47</text>\r\n<line id=\"conexaoeqpto47\" x1=\"32.6762898252716\" y1=\"205.707026210613\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme47\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme47\" x=\"32.6762898252716\" y=\"209.707026210613\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme47\" cx=\"32.6762898252716\" cy=\"205.707026210613\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme47\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico49\" x=\"76.7922585990577\" y=\"190.914880549698\" fill=\"#cfcfcf\" transform=\"rotate(7.89493900945059 76.7922585990577,190.914880549698)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 49</text>\r\n<line id=\"conexaoeqpto49\" x1=\"43.5784091723282\" y1=\"186.309205919678\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme49\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme49\" x=\"43.5784091723282\" y=\"190.309205919678\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme49\" cx=\"43.5784091723282\" cy=\"186.309205919678\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme49\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico51\" x=\"90.076328918211\" y=\"173.138801310752\" fill=\"#cfcfcf\" transform=\"rotate(10.1556190841011 90.076328918211,173.138801310752)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 51</text>\r\n<line id=\"conexaoeqpto51\" x1=\"57.7480841794251\" y1=\"167.348054731469\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme51\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme51\" x=\"57.7480841794251\" y=\"171.348054731469\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme51\" cx=\"57.7480841794251\" cy=\"167.348054731469\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme51\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico53\" x=\"106.345015331715\" y=\"155.877434963241\" fill=\"#cfcfcf\" transform=\"rotate(12.5264990623147 106.345015331715,155.877434963241)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 53</text>\r\n<line id=\"conexaoeqpto53\" x1=\"75.1013496871624\" y1=\"148.935930627457\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme53\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme53\" x=\"75.1013496871624\" y=\"152.935930627457\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme53\" cx=\"75.1013496871624\" cy=\"148.935930627457\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme53\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico55\" x=\"125.501914580691\" y=\"139.23306708366\" fill=\"#cfcfcf\" transform=\"rotate(15.0390028599003 125.501914580691,139.23306708366)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 55</text>\r\n<line id=\"conexaoeqpto55\" x1=\"95.5353755527366\" y1=\"131.18193822257\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme55\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme55\" x=\"95.5353755527366\" y=\"135.18193822257\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme55\" cx=\"95.5353755527366\" cy=\"131.18193822257\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme55\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico57\" x=\"147.433508740539\" y=\"123.304327104328\" fill=\"#cfcfcf\" transform=\"rotate(17.7299251486176 147.433508740539,123.304327104328)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 57</text>\r\n<line id=\"conexaoeqpto57\" x1=\"118.929075989908\" y1=\"114.191282244617\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme57\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme57\" x=\"118.929075989908\" y=\"118.191282244617\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme57\" cx=\"118.929075989908\" cy=\"114.191282244617\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme57\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico59\" x=\"172.009837893436\" y=\"108.18560386555\" fill=\"#cfcfcf\" transform=\"rotate(20.6429968473998 172.009837893436,108.18560386555)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 59</text>\r\n<line id=\"conexaoeqpto59\" x1=\"145.143827086332\" y1=\"98.0646441232538\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme59\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme59\" x=\"145.143827086332\" y=\"102.064644123254\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme59\" cx=\"145.143827086332\" cy=\"98.0646441232538\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme59\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico61\" x=\"199.085270231047\" y=\"93.9664862962211\" fill=\"#cfcfcf\" transform=\"rotate(23.8307272535623 199.085270231047,93.9664862962211)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 61</text>\r\n<line id=\"conexaoeqpto61\" x1=\"174.02428824645\" y1=\"82.8975853826359\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme61\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme61\" x=\"174.02428824645\" y=\"86.8975853826359\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme61\" cx=\"174.02428824645\" cy=\"82.8975853826359\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme61\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico63\" x=\"228.499365024075\" y=\"80.7312325372384\" fill=\"#cfcfcf\" transform=\"rotate(27.3564615454704 228.499365024075,80.7312325372384)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 63</text>\r\n<line id=\"conexaoeqpto63\" x1=\"205.399322692346\" y1=\"68.7799813730543\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme63\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme63\" x=\"205.399322692346\" y=\"72.7799813730543\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme63\" cx=\"205.399322692346\" cy=\"68.7799813730543\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme63\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico65\" x=\"260.077823344939\" y=\"68.558270653538\" fill=\"#cfcfcf\" transform=\"rotate(31.296412451726 260.077823344939,68.558270653538)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 65</text>\r\n<line id=\"conexaoeqpto65\" x1=\"239.083011567935\" y1=\"55.7954886971072\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme65\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme65\" x=\"239.083011567935\" y=\"59.7954886971072\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme65\" cx=\"239.083011567935\" cy=\"55.7954886971072\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme65\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico67\" x=\"293.633520909901\" y=\"57.5197338933715\" fill=\"#cfcfcf\" transform=\"rotate(35.7410451896446 293.633520909901,57.5197338933715)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 67</text>\r\n<line id=\"conexaoeqpto67\" x1=\"274.875755637228\" y1=\"44.0210494862629\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme67\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme67\" x=\"274.875755637228\" y=\"48.0210494862629\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme67\" cx=\"274.875755637228\" cy=\"44.0210494862629\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme67\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico69\" x=\"328.967616920325\" y=\"47.6810332487444\" fill=\"#cfcfcf\" transform=\"rotate(40.7944646583937 328.967616920325,47.6810332487444)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"start\">SERVIÇO/IP --> 69</text>\r\n<line id=\"conexaoeqpto69\" x1=\"312.565458048346\" y1=\"33.5264354653273\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme69\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme69\" x=\"312.565458048346\" y=\"37.5264354653273\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme69\" cx=\"312.565458048346\" cy=\"33.5264354653273\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme69\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico2\" x=\"603.255888426306\" y=\"502.821527927635\" fill=\"#cfcfcf\" transform=\"rotate(83.3650953263814 603.255888426306,502.821527927635)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 2</text>\r\n<line id=\"conexaoeqpto2\" x1=\"605.139614321393\" y1=\"519.009629789478\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme2\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme2\" x=\"605.139614321393\" y=\"523.009629789478\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme2\" cx=\"605.139614321393\" cy=\"519.009629789478\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme2\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico4\" x=\"644.424161000677\" y=\"500.467131187784\" fill=\"#cfcfcf\" transform=\"rotate(73.8984646513119 644.424161000677,500.467131187784)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 4</text>\r\n<line id=\"conexaoeqpto4\" x1=\"649.052438400722\" y1=\"516.49827326697\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme4\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme4\" x=\"649.052438400722\" y=\"520.49827326697\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme4\" cx=\"649.052438400722\" cy=\"516.49827326697\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme4\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico6\" x=\"685.069940470608\" y=\"496.687799790611\" fill=\"#cfcfcf\" transform=\"rotate(65.0614782368941 685.069940470608,496.687799790611)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 6</text>\r\n<line id=\"conexaoeqpto6\" x1=\"692.407936501981\" y1=\"512.466986443318\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme6\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme6\" x=\"692.407936501981\" y=\"516.466986443318\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme6\" cx=\"692.407936501981\" cy=\"512.466986443318\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme6\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico8\" x=\"724.952372381044\" y=\"491.505928897827\" fill=\"#cfcfcf\" transform=\"rotate(57.0695098908394 724.952372381044,491.505928897827)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 8</text>\r\n<line id=\"conexaoeqpto8\" x1=\"734.949197206447\" y1=\"506.939657491015\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme8\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme8\" x=\"734.949197206447\" y=\"510.939657491015\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme8\" cx=\"734.949197206447\" cy=\"506.939657491015\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme8\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico10\" x=\"763.835125641051\" y=\"484.952224691139\" fill=\"#cfcfcf\" transform=\"rotate(49.9898483785166 763.835125641051,484.952224691139)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 10</text>\r\n<line id=\"conexaoeqpto10\" x1=\"776.424134017121\" y1=\"499.949039670548\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme10\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme10\" x=\"776.424134017121\" y=\"503.949039670548\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme10\" cx=\"776.424134017121\" cy=\"499.949039670548\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme10\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico12\" x=\"801.487792949563\" y=\"477.065522416811\" fill=\"#cfcfcf\" transform=\"rotate(43.7843572159189 801.487792949563,477.065522416811)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 12</text>\r\n<line id=\"conexaoeqpto12\" x1=\"816.5869791462\" y1=\"491.536557244599\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme12\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme12\" x=\"816.5869791462\" y=\"495.536557244599\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme12\" cx=\"816.5869791462\" cy=\"491.536557244599\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme12\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico14\" x=\"837.68725611856\" y=\"467.892556259874\" fill=\"#cfcfcf\" transform=\"rotate(38.3594728261177 837.68725611856,467.892556259874)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 14</text>\r\n<line id=\"conexaoeqpto14\" x1=\"855.199739859798\" y1=\"481.752060010533\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme14\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme14\" x=\"855.199739859798\" y=\"485.752060010533\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme14\" cx=\"855.199739859798\" cy=\"481.752060010533\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme14\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico16\" x=\"872.219008203202\" y=\"457.487682411641\" fill=\"#cfcfcf\" transform=\"rotate(33.6031101292041 872.219008203202,457.487682411641)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 16</text>\r\n<line id=\"conexaoeqpto16\" x1=\"892.033608750082\" y1=\"470.653527905751\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme16\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme16\" x=\"892.033608750082\" y=\"474.653527905751\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme16\" cx=\"892.033608750082\" cy=\"470.653527905751\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme16\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico18\" x=\"904.878424604357\" y=\"445.912556971548\" fill=\"#cfcfcf\" transform=\"rotate(29.4055625204324 904.878424604357,445.912556971548)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 18</text>\r\n<line id=\"conexaoeqpto18\" x1=\"926.870319577981\" y1=\"458.306727436318\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme18\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme18\" x=\"926.870319577981\" y=\"462.306727436318\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme18\" cx=\"926.870319577981\" cy=\"458.306727436318\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme18\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico20\" x=\"935.471975611382\" y=\"433.235770591966\" fill=\"#cfcfcf\" transform=\"rotate(25.6687846709671 935.471975611382,433.235770591966)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 20</text>\r\n<line id=\"conexaoeqpto20\" x1=\"959.503440652141\" y1=\"444.784821964764\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme20\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme20\" x=\"959.503440652141\" y=\"448.784821964764\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme20\" cx=\"959.503440652141\" cy=\"444.784821964764\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme20\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico22\" x=\"963.818373199984\" y=\"419.532442030985\" fill=\"#cfcfcf\" transform=\"rotate(22.3090339173488 963.818373199984,419.532442030985)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 22</text>\r\n<line id=\"conexaoeqpto22\" x1=\"989.739598079983\" y1=\"430.167938166384\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme22\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme22\" x=\"989.739598079983\" y=\"434.167938166384\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme22\" cx=\"989.739598079983\" cy=\"430.167938166384\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme22\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico24\" x=\"989.749645289593\" y=\"404.883773021626\" fill=\"#cfcfcf\" transform=\"rotate(19.2563194612817 989.749645289593,404.883773021626)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 24</text>\r\n<line id=\"conexaoeqpto24\" x1=\"1017.39962164223\" y1=\"414.542691223068\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme24\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme24\" x=\"1017.39962164223\" y=\"418.542691223068\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme24\" cx=\"1017.39962164223\" cy=\"414.542691223068\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme24\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico26\" x=\"1013.11213109453\" y=\"389.376567095215\" fill=\"#cfcfcf\" transform=\"rotate(16.452602973318 1013.11213109453,389.376567095215)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 26</text>\r\n<line id=\"conexaoeqpto26\" x1=\"1042.31960650083\" y1=\"398.00167156823\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme26\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme26\" x=\"1042.31960650083\" y=\"402.00167156823\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme26\" cx=\"1042.31960650083\" cy=\"398.00167156823\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme26\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico28\" x=\"1033.7673916708\" y=\"373.102715210212\" fill=\"#cfcfcf\" transform=\"rotate(13.8497069161411 1033.7673916708,373.102715210212)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 28</text>\r\n<line id=\"conexaoeqpto28\" x1=\"1064.35188444886\" y1=\"380.642896224226\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme28\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme28\" x=\"1064.35188444886\" y=\"384.642896224226\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme28\" cx=\"1064.35188444886\" cy=\"380.642896224226\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme28\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico30\" x=\"1051.59303026296\" y=\"356.158651234499\" fill=\"#cfcfcf\" transform=\"rotate(11.4073415032796 1051.59303026296,356.158651234499)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 30</text>\r\n<line id=\"conexaoeqpto30\" x1=\"1083.36589894716\" y1=\"362.569227983466\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme30\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme30\" x=\"1083.36589894716\" y=\"366.569227983466\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme30\" cx=\"1083.36589894716\" cy=\"362.569227983466\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme30\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico32\" x=\"1066.48341758981\" y=\"338.644780507782\" fill=\"#cfcfcf\" transform=\"rotate(9.09139001539721 1066.48341758981,338.644780507782)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 32</text>\r\n<line id=\"conexaoeqpto32\" x1=\"1099.24897876247\" y1=\"343.887765874968\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme32\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme32\" x=\"1099.24897876247\" y=\"347.887765874968\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme32\" cx=\"1099.24897876247\" cy=\"343.887765874968\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme32\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico34\" x=\"1078.35031777122\" y=\"320.664884870261\" fill=\"#cfcfcf\" transform=\"rotate(6.87246908704201 1078.35031777122,320.664884870261)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 34</text>\r\n<line id=\"conexaoeqpto34\" x1=\"1111.90700562263\" y1=\"324.709210528279\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme34\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme34\" x=\"1111.90700562263\" y=\"328.709210528279\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme34\" cx=\"1111.90700562263\" cy=\"324.709210528279\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme34\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico36\" x=\"1087.12341118695\" y=\"302.325507683195\" fill=\"#cfcfcf\" transform=\"rotate(4.72473092199084 1087.12341118695,302.325507683195)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 36</text>\r\n<line id=\"conexaoeqpto36\" x1=\"1121.26497193274\" y1=\"305.147208195408\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme36\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme36\" x=\"1121.26497193274\" y=\"309.147208195408\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme36\" cx=\"1121.26497193274\" cy=\"305.147208195408\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme36\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico38\" x=\"1092.75071116922\" y=\"283.735322485534\" fill=\"#cfcfcf\" transform=\"rotate(2.62485860216 1092.75071116922,283.735322485534)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 38</text>\r\n<line id=\"conexaoeqpto38\" x1=\"1127.26742524717\" y1=\"285.317677317903\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme38\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme38\" x=\"1127.26742524717\" y=\"289.317677317903\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme38\" cx=\"1127.26742524717\" cy=\"285.317677317903\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme38\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico40\" x=\"1095.19887205982\" y=\"265.004489027775\" fill=\"#cfcfcf\" transform=\"rotate(0.551204023069034 1095.19887205982,265.004489027775)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 40</text>\r\n<line id=\"conexaoeqpto40\" x1=\"1129.87879686381\" y1=\"265.338121629626\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme40\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme40\" x=\"1129.87879686381\" y=\"269.338121629626\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme40\" cx=\"1129.87879686381\" cy=\"265.338121629626\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme40\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico42\" x=\"1094.45338680623\" y=\"246.244000498977\" fill=\"#cfcfcf\" transform=\"rotate(-1.5169788314063 1094.45338680623,246.244000498977)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 42</text>\r\n<line id=\"conexaoeqpto42\" x1=\"1129.08361259331\" y1=\"245.326933865575\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme42\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme42\" x=\"1129.08361259331\" y=\"249.326933865575\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme42\" cx=\"1129.08361259331\" cy=\"245.326933865575\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme42\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico44\" x=\"1090.518672926\" y=\"227.565025815079\" fill=\"#cfcfcf\" transform=\"rotate(-3.6002488129321 1090.518672926,227.565025815079)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 44</text>\r\n<line id=\"conexaoeqpto44\" x1=\"1124.8865844544\" y1=\"225.402694202751\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme44\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme44\" x=\"1124.8865844544\" y=\"229.402694202751\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme44\" cx=\"1124.8865844544\" cy=\"225.402694202751\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme44\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico46\" x=\"1083.41804632991\" y=\"209.07825086591\" fill=\"#cfcfcf\" transform=\"rotate(-5.71968176962673 1083.41804632991,209.07825086591)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 46</text>\r\n<line id=\"conexaoeqpto46\" x1=\"1117.3125827519\" y1=\"205.683467590304\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme46\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme46\" x=\"1117.3125827519\" y=\"209.683467590304\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme46\" cx=\"1117.3125827519\" cy=\"205.683467590304\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme46\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico48\" x=\"1073.19358315899\" y=\"190.893222624469\" fill=\"#cfcfcf\" transform=\"rotate(-7.89760442573685 1073.19358315899,190.893222624469)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 48</text>\r\n<line id=\"conexaoeqpto48\" x1=\"1106.40648870292\" y1=\"186.286104132767\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme48\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme48\" x=\"1106.40648870292\" y=\"190.286104132767\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme48\" cx=\"1106.40648870292\" cy=\"186.286104132767\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme48\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico50\" x=\"1059.90587045419\" y=\"173.117700005073\" fill=\"#cfcfcf\" transform=\"rotate(-10.1583999681683 1059.90587045419,173.117700005073)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 50</text>\r\n<line id=\"conexaoeqpto50\" x1=\"1092.23292848447\" y1=\"167.325546672078\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme50\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme50\" x=\"1092.23292848447\" y=\"171.325546672078\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme50\" cx=\"1092.23292848447\" cy=\"167.325546672078\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme50\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico52\" x=\"1043.63364713612\" y=\"155.857015316994\" fill=\"#cfcfcf\" transform=\"rotate(-12.5294305461819 1043.63364713612,155.857015316994)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 52</text>\r\n<line id=\"conexaoeqpto52\" x1=\"1074.87589027853\" y1=\"148.91414967146\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme52\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme52\" x=\"1074.87589027853\" y=\"152.91414967146\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme52\" cx=\"1074.87589027853\" cy=\"148.91414967146\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme52\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico54\" x=\"1024.47333742227\" y=\"139.213450097422\" fill=\"#cfcfcf\" transform=\"rotate(-15.042125705881 1024.47333742227,139.213450097422)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 54</text>\r\n<line id=\"conexaoeqpto54\" x1=\"1054.43822658375\" y1=\"131.16101343725\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme54\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme54\" x=\"1054.43822658375\" y=\"135.16101343725\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme54\" cx=\"1054.43822658375\" cy=\"131.16101343725\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme54\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico56\" x=\"1002.5384794466\" y=\"123.285629022359\" fill=\"#cfcfcf\" transform=\"rotate(-17.7332874691839 1002.5384794466,123.285629022359)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 56</text>\r\n<line id=\"conexaoeqpto56\" x1=\"1031.04104474304\" y1=\"114.171337623849\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme56\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme56\" x=\"1031.04104474304\" y=\"118.171337623849\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme56\" cx=\"1031.04104474304\" cy=\"114.171337623849\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme56\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico58\" x=\"977.959052467312\" y=\"108.167935486963\" fill=\"#cfcfcf\" transform=\"rotate(-20.6466561574309 977.959052467312,108.167935486963)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 58</text>\r\n<line id=\"conexaoeqpto58\" x1=\"1004.82298929847\" y1=\"98.045797852761\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme58\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme58\" x=\"1004.82298929847\" y=\"102.045797852761\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme58\" cx=\"1004.82298929847\" cy=\"98.045797852761\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme58\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico60\" x=\"950.880706649519\" y=\"93.9499523184229\" fill=\"#cfcfcf\" transform=\"rotate(-23.8347528415043 950.880706649519,93.9499523184229)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 60</text>\r\n<line id=\"conexaoeqpto60\" x1=\"975.939420426154\" y1=\"82.879949139651\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme60\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme60\" x=\"975.939420426154\" y=\"86.879949139651\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme60\" cx=\"975.939420426154\" cy=\"82.879949139651\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme60\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico62\" x=\"921.463899986908\" y=\"80.7159309355235\" fill=\"#cfcfcf\" transform=\"rotate(-27.3609370095195 921.463899986908,80.7159309355235)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 62</text>\r\n<line id=\"conexaoeqpto62\" x1=\"944.561493319368\" y1=\"68.7636596645584\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme62\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme62\" x=\"944.561493319368\" y=\"72.7636596645584\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme62\" cx=\"944.561493319368\" cy=\"68.7636596645584\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme62\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico64\" x=\"889.882947476766\" y=\"68.5442921005171\" fill=\"#cfcfcf\" transform=\"rotate(-31.3014379351694 889.882947476766,68.5442921005171)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 64</text>\r\n<line id=\"conexaoeqpto64\" x1=\"910.875143975217\" y1=\"55.7805782405516\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme64\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme64\" x=\"910.875143975217\" y=\"59.7805782405516\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme64\" cx=\"910.875143975217\" cy=\"55.7805782405516\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme64\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico66\" x=\"856.324988182638\" y=\"57.5071612216737\" fill=\"#cfcfcf\" transform=\"rotate(-35.7467382164967 856.324988182638,57.5071612216737)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 66</text>\r\n<line id=\"conexaoeqpto66\" x1=\"875.079987394813\" y1=\"44.007638636452\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme66\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme66\" x=\"875.079987394813\" y=\"48.007638636452\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme66\" cx=\"875.079987394813\" cy=\"44.007638636452\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme66\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n\r\n<text id=\"servico68\" x=\"820.988876305471\" y=\"47.669940960176\" fill=\"#cfcfcf\" transform=\"rotate(-40.8009573101073 820.988876305471,47.669940960176)\" font-family=\"cursive\" font-size=\"11\" text-anchor=\"end\">SERVIÇO/IP --> 68</text>\r\n<line id=\"conexaoeqpto68\" x1=\"837.388134725836\" y1=\"33.5146036908544\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n<!-- <a id=\"linkalarme68\" href=\"\" target=\"_self\"> -->\r\n\t<text id=\"textalarme68\" x=\"837.388134725836\" y=\"37.5146036908544\" fill=\"#FFFFFF\" font-weight=\"bold\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"middle\"/>\r\n\t<circle id=\"alarme68\" cx=\"837.388134725836\" cy=\"33.5146036908544\" r=\"12\" fill=\"#00FF00\" stroke=\"none\" opacity=\"0.4\">\r\n\t\t<title id=\"titlealarme68\"></title>\r\n\t</circle>\r\n<!-- </a>  -->\r\n<line id=\"conexaoeqpto1\" x1=\"575\" y1=\"70\" x2=\"575\" y2=\"260\" stroke=\"#cfcfcf\" stroke-width=\"1\" stroke-dasharray=\"3\" opacity=\"0.5\"/>\r\n\t<g><title id=\"titlerouter\"></title>\r\n\t\t<svg id=\"svgrouter\" x=\"550\" y=\"45\">\r\n\t\t\t<circle id=\"router\" cx=\"25\" cy=\"25\" r=\"24\" fill=\"#a9c3eb\" stroke=\"#005073\" stroke-width=\"1\" opacity=\"1.0\"/>\r\n\t\t\t<line x1=\"4\" y1=\"25\" x2=\"20\" y2=\"25\"  stroke=\"#005073\" stroke-width=\"2\"  />\r\n\t\t\t<polygon points=\"10,21 10,29 4,25\" fill=\"#005073\" stroke=\"none\"/>\r\n\t\t\t<line x1=\"30\" y1=\"25\" x2=\"46\" y2=\"25\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"40,21 40,29 46,25\" fill=\"#005073\" stroke=\"none\"/>\r\n\t\t\t<line x1=\"25\" y1=\"4\" x2=\"25\" y2=\"20\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"21,16 29,16 25,20\" fill=\"#005073\" stroke=\"none\"/>\r\n\t\t\t<line x1=\"25\" y1=\"30\" x2=\"25\" y2=\"46\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"21,34 29,34 25,30\" fill=\"#005073\" stroke=\"none\"/>\r\n\t\t</svg>\r\n\t</g>\r\n\r\n<text id=\"textorouter\" x=\"575\" y=\"40\" fill=\"#cfcfcf\" transform=\"rotate(0 575,40)\" font-family=\"cursive\" font-size=\"10\" text-anchor=\"middle\"></text>\r\n<!-- <a id=\"linkswitch1\" href=\"\" target=\"_self\"> -->\r\n\t<g><title id=\"titleswitch1\"></title>\r\n\t\t<svg id=\"svgswitch1\" x=\"540\" y=\"230\">\r\n\t\t\t<rect id=\"switch1\" x=\"10\" y=\"10\" width=\"50\" height=\"50\" rx=\"2\" fill=\"#a9c4eb\" stroke=\"#005073\" stroke-width=\"1\" opacity=\"1.0\"/>\r\n\t\t\t<line x1=\"12\" y1=\"20\" x2=\"35\" y2=\"20\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"12,20 17,15 17,25\" fill=\"#005073\" />\r\n\t\t\t<line x1=\"35\" y1=\"30\" x2=\"58\" y2=\"30\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"58,30 53,25 53,35\" fill=\"#005073\" />\r\n\t\t\t<line x1=\"12\" y1=\"40\" x2=\"35\" y2=\"40\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"12,40 17,35 17,45\" fill=\"#005073\" />\r\n\t\t\t<line x1=\"35\" y1=\"50\" x2=\"58\" y2=\"50\"  stroke=\"#005073\" stroke-width=\"2\"/>\r\n\t\t\t<polygon points=\"58,50 53,45 53,55\" fill=\"#005073\" />\r\n\t\t</svg>\r\n\t</g>\r\n<!-- </a>  -->\r\n\r\n<text id=\"ipswitch1\" x=\"575\" y=\"225\" fill=\"#cfcfcf\" transform=\"rotate(0 575,225)\" font-family=\"cursive\" font-size=\"10\" text-anchor=\"middle\">200.200.200.200</text>\r\n\r\n<text id=\"textoswitch1\" x=\"575\" y=\"205\" fill=\"#cfcfcf\" transform=\"rotate(0 575,205)\" font-family=\"cursive\" font-size=\"10\" text-anchor=\"middle\">Switch Central</text>\r\n<g id=\"acelerador\"><svg x=\"560\" y=\"150\"><rect x=\"0\" y=\"0\" width=\"30\" height=\"30\" fill=\"none\" stroke=\"none\" pointer-events=\"all\"/><path d=\"M 1.84 0 C 0.83 0 0 0.82 0 1.83 L 0 28.17 C 0 29.18 0.83 30 1.84 30 L 28.16 30 C 29.17 30 30 29.18 30 28.17 L 30 1.83 C 30 0.82 29.17 0 28.16 0 Z\" fill=\"#a9c4eb\" stroke=\"none\" pointer-events=\"all\"/><rect x=\"0\" y=\"0\" width=\"30\" height=\"30\" fill=\"none\" stroke=\"none\" pointer-events=\"all\"/><path d=\"M 15.02 2.76 L 12.5 6.36 L 14.17 6.36 L 14.17 10.18 C 13.44 10.3 12.74 10.59 12.14 11.03 L 9.42 8.33 L 10.59 7.15 L 6.28 6.37 L 7.07 10.68 L 8.25 9.5 L 10.97 12.2 C 10.56 12.79 10.28 13.46 10.16 14.17 L 6.32 14.17 L 6.32 12.51 L 2.7 14.98 L 6.32 17.48 L 6.32 15.82 L 10.15 15.82 C 10.28 16.54 10.56 17.22 10.98 17.82 L 8.27 20.52 L 7.09 19.35 L 6.31 23.66 L 10.62 22.86 L 9.44 21.69 L 12.15 18.99 C 12.75 19.41 13.44 19.7 14.17 19.82 L 14.17 23.64 L 12.5 23.64 L 15.02 27.24 L 17.5 23.64 L 15.83 23.64 L 15.83 19.82 C 16.55 19.7 17.24 19.41 17.84 18.99 L 20.56 21.69 L 19.39 22.87 L 23.72 23.63 L 22.91 19.34 L 21.73 20.52 L 19.01 17.83 C 19.44 17.23 19.72 16.54 19.84 15.82 L 23.68 15.82 L 23.68 17.48 L 27.3 14.98 L 23.68 12.51 L 23.68 14.17 L 19.85 14.17 C 19.72 13.45 19.43 12.76 19 12.16 L 21.71 9.46 L 22.89 10.63 L 23.69 6.34 L 19.36 7.12 L 20.54 8.29 L 17.83 11 C 17.23 10.58 16.55 10.3 15.83 10.18 L 15.83 6.36 L 17.5 6.36 Z M 1.84 0 C 0.83 0 0 0.82 0 1.83 L 0 28.17 C 0 29.18 0.83 30 1.84 30 L 28.16 30 C 29.17 30 30 29.18 30 28.17 L 30 1.83 C 30 0.82 29.17 0 28.16 0 Z M 1.84 0.83 L 28.16 0.83 C 28.73 0.83 29.17 1.27 29.17 1.83 L 29.17 28.17 C 29.17 28.73 28.73 29.17 28.16 29.17 L 1.84 29.17 C 1.27 29.17 0.83 28.73 0.83 28.17 L 0.83 1.83 C 0.83 1.27 1.27 0.83 1.84 0.83 Z\" fill=\"#005073\" stroke=\"none\" pointer-events=\"all\"/></svg></g>\r\n\r\n<text id=\"textoacelerador\" x=\"575\" y=\"125\" fill=\"#cfcfcf\" transform=\"rotate(0 575,125)\" font-family=\"cursive\" font-size=\"10\" text-anchor=\"middle\">Acelerador WAN</text>\r\n\r\n<text id=\"ipacelerador\" x=\"575\" y=\"145\" fill=\"#cfcfcf\" transform=\"rotate(0 575,145)\" font-family=\"cursive\" font-size=\"10\" text-anchor=\"middle\">10.72.20.21</text>\r\n\r\n<text  x=\"30\" y=\"450\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">SEVERIDADE:</text>\r\n\r\n<rect  x=\"30\" y=\"465\" width=\"15.0\" height=\"5\" rx=\"1\" fill=\"#ff0000\" stroke=\"none\" stroke-width=\"1.0\" opacity=\"1.0\"/>\r\n\r\n<text  x=\"50\" y=\"470\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">Desastre</text>\r\n\r\n<rect  x=\"30\" y=\"485\" width=\"15.0\" height=\"5\" rx=\"1\" fill=\"#ffff00\" stroke=\"none\" stroke-width=\"1.0\" opacity=\"1.0\"/>\r\n\r\n<text  x=\"50\" y=\"490\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">Incidente</text>\r\n\r\n<rect  x=\"30\" y=\"505\" width=\"15.0\" height=\"5\" rx=\"1\" fill=\"#00ff00\" stroke=\"none\" stroke-width=\"1.0\" opacity=\"1.0\"/>\r\n\r\n<text  x=\"50\" y=\"510\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">Normal</text>\r\n\r\n<rect  x=\"30\" y=\"525\" width=\"15.0\" height=\"5\" rx=\"1\" fill=\"#CCCCCC\" stroke=\"none\" stroke-width=\"1.0\" opacity=\"1.0\"/>\r\n\r\n<text  x=\"50\" y=\"530\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">Sem Coleta</text>\r\n\r\n<text  x=\"1030\" y=\"450\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">EQUIPAMENTO:</text>\r\n\r\n<text  x=\"1030\" y=\"470\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">AC - Access Point</text>\r\n\r\n<text  x=\"1030\" y=\"490\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">DC - Domain Controller</text>\r\n\r\n<text  x=\"1030\" y=\"510\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">SV - Servidor</text>\r\n\r\n<text  x=\"1030\" y=\"530\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">SR - Serviço Rede</text>\r\n\r\n<text  x=\"1030\" y=\"550\" fill=\"#CFCFCF\" font-family=\"cursive\" font-size=\"12\" text-anchor=\"start\">SW - Switch</text>\r\n</svg>\r\n",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_DB_2_ZBX_UNICO}"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  CONCAT (host, '___', ordem , '___', tipo,  '___', ip,  '___', name) as \"DADOS\", now() as time\r\nfrom (\r\nselect   hg.groupid\r\n, htg.name as grupo\r\n, h.name\r\n, int.ip\r\n, h.host\r\n, lower(hi.type) as tipo\r\n, hi.type_full, case when hi.type_full = 'SC' then 1 when hi.type_full = 'DC' then 2 when hi.type_full = 'SR' then 3 else 4 end as ordem\r\n, h.status\r\nfrom\r\n  host_inventory hi\r\n, hosts_groups hg\r\n    , hstgrp htg\r\n, hosts h\r\n, interface int\r\nwhere\r\n    hi.hostid = h.hostid\r\nand hg.groupid = htg.groupid\r\nand hg.hostid = h.hostid\r\nand int.hostid = h.hostid\r\nand htg.name ~ '^LAN/MODELO'\r\nand h.name !~ 'EADI|RANEXA'\r\nand int.ip !~ '127.0.0.1'\r\nand h.status = 0 order by ordem) t\r\nwhere grupo ~* 'LAN/MODELO/$uf/$rede' order by ordem, tipo desc ;",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_DB_2_ZBX_UNICO}"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select '${rilan:pipe}' as \"RILAN\", now() as time",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_DB_2_ZBX_UNICO}"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select '$localidade' as \"ALIAS\", now() as time",
+          "refId": "C",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_DB_2_ZBX_UNICO}"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select '${riwan:pipe}' as \"RIWAN\", now() as time",
+          "refId": "D",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "timeColumn": "time",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "TOPOLOGIA",
+      "type": "marcuscalidus-svg-panel",
+      "useSVGBuilder": false
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_DB_2_ZBX_UNICO}"
+        },
+        "definition": "select distinct split_part(name,'/',3) from hstgrp where name ~ 'LAN/MODELO/' order by 1",
+        "hide": 0,
+        "includeAll": false,
+        "label": "UF",
+        "multi": false,
+        "name": "uf",
+        "options": [],
+        "query": "select distinct split_part(name,'/',3) from hstgrp where name ~ 'LAN/MODELO/' order by 1",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_DB_2_ZBX_UNICO}"
+        },
+        "definition": "select  \n\t   split_part(grupo,'/',4) as \"REDE\" from \n\t   (select \n\t\t  hg.groupid\n\t\t, htg.name as grupo\n\t\t, h.name\n\t\t, int.ip\n\t\t, h.host\n\t\t, lower(hi.type) as tipo\n\t\t, hi.type_full\n\t\t, case when hi.type_full = 'SC' then 1 when hi.type_full = 'DC' then 2 else 3 end as ordem\n\t\t, h.status from host_inventory hi\n\t\t, hosts_groups hg\n\t\t, hstgrp htg\n\t\t, hosts h\n\t\t, interface int where \n\t\t    hi.hostid = h.hostid \n\t\tand hg.groupid = htg.groupid \n\t\tand hg.hostid = h.hostid \n\t\tand int.hostid = h.hostid \n\t\tand htg.name ~ '^LAN/MODELO' \n\t\tand h.name !~ 'EADI|RANEXA' \n\t\tand int.ip !~ '127.0.0.1' \n\t\tand h.status = 0) t \nwhere grupo ~* 'LAN/MODELO/$uf/'  and grupo !~ 'EADI|RANEXA'  order by grupo;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Rede",
+        "multi": false,
+        "name": "rede",
+        "options": [],
+        "query": "select  \n\t   split_part(grupo,'/',4) as \"REDE\" from \n\t   (select \n\t\t  hg.groupid\n\t\t, htg.name as grupo\n\t\t, h.name\n\t\t, int.ip\n\t\t, h.host\n\t\t, lower(hi.type) as tipo\n\t\t, hi.type_full\n\t\t, case when hi.type_full = 'SC' then 1 when hi.type_full = 'DC' then 2 else 3 end as ordem\n\t\t, h.status from host_inventory hi\n\t\t, hosts_groups hg\n\t\t, hstgrp htg\n\t\t, hosts h\n\t\t, interface int where \n\t\t    hi.hostid = h.hostid \n\t\tand hg.groupid = htg.groupid \n\t\tand hg.hostid = h.hostid \n\t\tand int.hostid = h.hostid \n\t\tand htg.name ~ '^LAN/MODELO' \n\t\tand h.name !~ 'EADI|RANEXA' \n\t\tand int.ip !~ '127.0.0.1' \n\t\tand h.status = 0) t \nwhere grupo ~* 'LAN/MODELO/$uf/'  and grupo !~ 'EADI|RANEXA'  order by grupo;",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "SELECT nome from ponto where nome ~* '$uf.*$rede' and nome ~ 'MODELO'",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Localidade",
+        "multi": false,
+        "name": "localidade",
+        "options": [],
+        "query": "SELECT nome from ponto where nome ~* '$uf.*$rede' and nome ~ 'MODELO'",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_DB_2_ZBX_UNICO}"
+        },
+        "definition": "select CONCAT(host,'__',severidade,'__',evento,'__',mensagem,'__',clock) as \"FALHALAN\"\nfrom (\n     select t.host,t.severidade,t.evento,a.message as mensagem,t.clock\n     from (  \n          select t.eventid,t.host, e.severity as severidade, t.evento, to_timestamp(e.clock) as clock\n          from (\n               select distinct t.eventid,t.host,t.evento\n               from (\n                    select distinct e.eventid, t.host, e.name as evento\n                    from (\n                         select distinct\n                                t.triggerid\n                              , h.hostid\n                              , h.host\n                           from hosts h, hosts_groups hg, hstgrp g, items i, functions f, triggers t\n                          where t.triggerid = f.triggerid\n                            and f.itemid = i.itemid\n                            and i.hostid = h.hostid\n                            and h.hostid = hg.hostid\n                            and hg.groupid = g.groupid\n                            and g.name ~ '^LAN/MODELO/$uf/$rede'\n--                            and g.name ~ '^WAN/MODELO/SP'\n                            and (h.status,i.status) = (0,0)\n                            and t.status = 0\n                            and t.value = 1\n                            and t.priority in (4,5)\n                    ) t, events e\n                    where t.triggerid = e.objectid\n                      and e.severity in (4,5)\n                      and e.value = 1\n                      and e.source = 0\n                      and to_timestamp(e.clock) between (now() - interval '30 day') and now()\n               ) t left join event_recovery r on r.eventid = t.eventid\n               where r.r_eventid is null\n          ) t, events e\n          where e.eventid = t.eventid\n     ) t left join acknowledges a on a.eventid = t.eventid\n     order by t.host, t.clock desc\n) t",
+        "hide": 2,
+        "includeAll": true,
+        "label": "RILAN",
+        "multi": true,
+        "name": "rilan",
+        "options": [],
+        "query": "select CONCAT(host,'__',severidade,'__',evento,'__',mensagem,'__',clock) as \"FALHALAN\"\nfrom (\n     select t.host,t.severidade,t.evento,a.message as mensagem,t.clock\n     from (  \n          select t.eventid,t.host, e.severity as severidade, t.evento, to_timestamp(e.clock) as clock\n          from (\n               select distinct t.eventid,t.host,t.evento\n               from (\n                    select distinct e.eventid, t.host, e.name as evento\n                    from (\n                         select distinct\n                                t.triggerid\n                              , h.hostid\n                              , h.host\n                           from hosts h, hosts_groups hg, hstgrp g, items i, functions f, triggers t\n                          where t.triggerid = f.triggerid\n                            and f.itemid = i.itemid\n                            and i.hostid = h.hostid\n                            and h.hostid = hg.hostid\n                            and hg.groupid = g.groupid\n                            and g.name ~ '^LAN/MODELO/$uf/$rede'\n--                            and g.name ~ '^WAN/MODELO/SP'\n                            and (h.status,i.status) = (0,0)\n                            and t.status = 0\n                            and t.value = 1\n                            and t.priority in (4,5)\n                    ) t, events e\n                    where t.triggerid = e.objectid\n                      and e.severity in (4,5)\n                      and e.value = 1\n                      and e.source = 0\n                      and to_timestamp(e.clock) between (now() - interval '30 day') and now()\n               ) t left join event_recovery r on r.eventid = t.eventid\n               where r.r_eventid is null\n          ) t, events e\n          where e.eventid = t.eventid\n     ) t left join acknowledges a on a.eventid = t.eventid\n     order by t.host, t.clock desc\n) t",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_DB_2_ZBX_UNICO}"
+        },
+        "definition": "select CONCAT(host,'__',severidade,'__',evento,'__',mensagem,'__',clock) as \"FALHAWAN\"\nfrom (\n     select t.host,t.severidade,t.evento,a.message as mensagem,t.clock\n     from (  \n          select t.eventid,t.host, e.severity as severidade, t.evento, to_timestamp(e.clock) as clock\n          from (\n               select distinct t.eventid,t.host,t.evento\n               from (\n                    select distinct e.eventid, t.host, e.name as evento\n                    from (\n                         select distinct\n                                t.triggerid\n                              , h.hostid\n                              , h.host\n                           from hosts h, hosts_groups hg, hstgrp g, items i, functions f, triggers t\n                          where t.triggerid = f.triggerid\n                            and f.itemid = i.itemid\n                            and i.hostid = h.hostid\n                            and h.hostid = hg.hostid\n                            and hg.groupid = g.groupid\n                            and g.name ~ '^WAN/MODELO/$uf'\n                            and h.name ~* '$rede' \n                            and (h.status,i.status) = (0,0)\n                            and t.status = 0\n                            and t.value = 1\n                            and t.priority in (4,5)\n                    ) t, events e\n                    where t.triggerid = e.objectid\n                      and e.severity in (4,5)\n                      and e.value = 1\n                      and e.source = 0\n                      and to_timestamp(e.clock) between (now() - interval '30 day') and now()\n               ) t left join event_recovery r on r.eventid = t.eventid\n               where r.r_eventid is null\n          ) t, events e\n          where e.eventid = t.eventid\n     ) t left join acknowledges a on a.eventid = t.eventid\n     order by t.host, t.clock desc\n) t",
+        "hide": 2,
+        "includeAll": true,
+        "label": "RIWAN",
+        "multi": true,
+        "name": "riwan",
+        "options": [],
+        "query": "select CONCAT(host,'__',severidade,'__',evento,'__',mensagem,'__',clock) as \"FALHAWAN\"\nfrom (\n     select t.host,t.severidade,t.evento,a.message as mensagem,t.clock\n     from (  \n          select t.eventid,t.host, e.severity as severidade, t.evento, to_timestamp(e.clock) as clock\n          from (\n               select distinct t.eventid,t.host,t.evento\n               from (\n                    select distinct e.eventid, t.host, e.name as evento\n                    from (\n                         select distinct\n                                t.triggerid\n                              , h.hostid\n                              , h.host\n                           from hosts h, hosts_groups hg, hstgrp g, items i, functions f, triggers t\n                          where t.triggerid = f.triggerid\n                            and f.itemid = i.itemid\n                            and i.hostid = h.hostid\n                            and h.hostid = hg.hostid\n                            and hg.groupid = g.groupid\n                            and g.name ~ '^WAN/MODELO/$uf'\n                            and h.name ~* '$rede' \n                            and (h.status,i.status) = (0,0)\n                            and t.status = 0\n                            and t.value = 1\n                            and t.priority in (4,5)\n                    ) t, events e\n                    where t.triggerid = e.objectid\n                      and e.severity in (4,5)\n                      and e.value = 1\n                      and e.source = 0\n                      and to_timestamp(e.clock) between (now() - interval '30 day') and now()\n               ) t left join event_recovery r on r.eventid = t.eventid\n               where r.r_eventid is null\n          ) t, events e\n          where e.eventid = t.eventid\n     ) t left join acknowledges a on a.eventid = t.eventid\n     order by t.host, t.clock desc\n) t",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "",
+  "title": "TopologiaLANPortalMODELO",
+  "uid": "TopologiaLANPortalMODELO",
+  "version": 1,
+  "weekStart": ""
+}

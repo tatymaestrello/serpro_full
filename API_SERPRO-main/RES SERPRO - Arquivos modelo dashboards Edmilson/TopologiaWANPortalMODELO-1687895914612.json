@@ -1,0 +1,990 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GDP_SUPCD",
+      "label": "GDP_SUPCD",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.4"
+    },
+    {
+      "type": "panel",
+      "id": "marcuscalidus-svg-panel",
+      "name": "SVG",
+      "version": "0.3.4"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Menu Portal Serviços ",
+      "tooltip": "",
+      "type": "link",
+      "url": "d/MenuPortalMODELO/menuportalmodelo?orgId=1"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "description": "",
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 17,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "id": 2,
+      "js_code": "// +----------------------------------------------------------------------------+\r\n// | 01/03/2021                                                                 |\r\n// | Painel Topologia Fixa, dados obtidos do banco                              |\r\n// | Nao precisa ler a figura SVG pronta                                        |\r\n// | Programa que gera o SVG na maquina WEB:                                    |\r\n// | /srv/www/cgi-bin/Opgdr/Topologia/GeraTopologiaWAN.pl                       | \r\n// +----------------------------------------------------------------------------+\r\n\r\n// jshint strict: false\r\n// +------------------------------------------------------------------------------------+\r\n// | Mesmo o script funcionando é exibido um aviso de:                                  |\r\n// | too many erros                                                                     |\r\n// | A linha acima exclui o aviso de erro                                               |\r\n// | https://forum.processing.org/two/discussion/15717/alert-too-many-erros-xx-scanned  |\r\n// +------------------------------------------------------------------------------------+\r\n\r\n\r\n//var s = Snap(svgnode);\r\n//var paths = s.selectAll('path');\r\n\r\n//const svg = document.getElementById('svg');\r\n\r\n// +----------------------------------------------------------------+\r\n// | Apagando todos os objetos relevantes                           |\r\n// +----------------------------------------------------------------+\r\n\r\nfor (var i = 1; i <= 12; i++) {\r\n\r\n    id = \"interface\"+i;\r\n    document.getElementById(id).style.display = \"none\";\r\n        \r\n    id = \"ccto\"+i;\r\n    document.getElementById(id).style.display = \"none\";\r\n\r\n    id = \"vel\"+i;\r\n    document.getElementById(id).style.display = \"none\";\r\n    \r\n    id = \"ip\"+i;\r\n    document.getElementById(id).style.display = \"none\";\r\n    \r\n    //if (i < 5) {\r\n        id = \"rede\"+i;\r\n        document.getElementById(id).style.display = \"none\";\r\n        id = \"lan\"+i;\r\n        document.getElementById(id).style.display = \"none\";\r\n        id = \"interfacelan\"+i;\r\n        document.getElementById(id).style.display = \"none\";        \r\n    //}\r\n\r\n}\r\n\r\ndocument.getElementById(\"nuvemmpls\").style.display = \"none\";\r\ndocument.getElementById(\"textompls\").style.display = \"none\";\r\ndocument.getElementById(\"nuveminternet\").style.display = \"none\";\r\ndocument.getElementById(\"textointernet\").style.display = \"none\";\r\ndocument.getElementById(\"aviso\").style.display = \"none\";\r\n\r\ndocument.getElementById(\"router\").style.display = \"block\";\r\ndocument.getElementById(\"switchcentral\").style.display = \"block\";\r\ndocument.getElementById(\"routerswitch\").style.display = \"block\";\r\n\r\n\r\nvar cliente; var uf; var localidade; var hostname; var alias;\r\n//var lan = []; var wan = []; var wanmais = []; var wanmaisserpro;\r\nvar w = 1;  // Contador cctos WANMAIS* \r\nvar a = 7;  // Contador cctos ACESSOS\r\nvar l = 1;  // Contador rede LOCAL\r\n\r\nvar total = 0;  // caso nao incremente sera apresentada mensagem de Sem Informacao\r\n\r\nctrl.data.forEach((item) => {\r\n\r\n    let valor = item.datapoints.map((d) => d[0]);\r\n\r\n    // Consulta A\r\n    if(item.alias === \"DADOS\") {\r\n        \r\n        let dados = String(valor).split(\"___\");\r\n        cliente = dados[0]; uf = dados[1]; localidade = dados[2]; hostname = dados[3]; alias = dados[4];\r\n        \r\n        // Link para o painel de TopologiaLAN\r\n        //let link = \"d/TopologiaLANPortal\"+cliente+\"/topologialanportalmodelo?orgId=5&var-localidade=\"+localidade+\"&var-hostname=\"+hostname+\"&var-uf=\"+uf+\"&var-rede=\"+alias;\r\n        //let link = \"d/MenuPortal\"+cliente+\"/menugtic\"+cliente+\"?orgId=1\";\r\n        //var svgElement = document.getElementById(\"linkswitchcentral\");\r\n        //svgElement.setAttribute(\"href\",link);\r\n    }\r\n    \r\n    // Consulta B\r\n    if(item.alias === \"INFO\") {\r\n        \r\n        for (let key in valor) {\r\n        \r\n            let dados = String(valor[key]).split(\"___\");\r\n            //alert(valor[key]);\r\n            // +-----------------------------------------+\r\n            // |     Acender Direto os Objetos           |\r\n            // +-----------------------------------------+\r\n                \r\n            if (dados[3] === \"LAN\") {\r\n                \r\n                if ((dados[1] !== \"0.0.0.0/24\") && (!(dados[1].includes(\"/30\")))) {\r\n                    id = \"interfacelan\"+l; //alert(dados[1]);\r\n\r\n                    document.getElementById(id).textContent = dados[0];\r\n                    document.getElementById(id).style.display = \"block\";\r\n    \r\n                    id = \"rede\"+l;\r\n                    document.getElementById(id).style.display = \"block\";\r\n\r\n                    id = \"lan\"+l;\r\n                    \r\n                    document.getElementById(id).textContent = dados[1];\r\n                    document.getElementById(id).style.display = \"block\";\r\n                    \r\n                    l++;\r\n                    total++;\r\n                }   \r\n                \r\n            }\r\n            \r\n            if ((dados[3] === \"ACESSO\") || (dados[3] === \"WAN\")){\r\n                document.getElementById(\"nuvemmpls\").style.display = \"block\";\r\n                document.getElementById(\"textompls\").style.display = \"block\";\r\n                \r\n                id = \"ccto\"+a;\r\n                document.getElementById(id).style.display = \"block\";\r\n\r\n                if (dados[1] !== \"0.0.0.0/24\") {\r\n                    id = \"ip\"+a;\r\n                    document.getElementById(id).textContent = dados[1];\r\n                    document.getElementById(id).style.display = \"block\";\r\n                }\r\n\r\n               if (parseInt(dados[2]) !== 0) {    \r\n                    id = \"vel\"+a;\r\n                    let vel = numbertoBytes(dados[2]*1000);\r\n                    document.getElementById(id).textContent = vel;\r\n                    document.getElementById(id).style.display = \"block\";\r\n                } else {\r\n                    id = \"vel\"+a;\r\n                    document.getElementById(id).style.display = \"none\";               \r\n                }\r\n\r\n                id = \"interface\"+a;\r\n                let iface = dados[0];\r\n                document.getElementById(id).textContent = iface;\r\n                document.getElementById(id).style.display = \"block\";    \r\n                \r\n                a++;\r\n                total++;\r\n            }    \r\n            \r\n            if (dados[3] === \"WANMAIS-SERPRO\") {\r\n                document.getElementById(\"nuveminternet\").style.display = \"block\";\r\n                document.getElementById(\"textointernet\").style.display = \"block\";\r\n                \r\n                id = \"ccto\"+w;\r\n                document.getElementById(id).style.display = \"block\";\r\n\r\n                if (dados[1] !== \"0.0.0.0/24\") {\r\n                    id = \"ip\"+w;\r\n                    document.getElementById(id).textContent = dados[1];\r\n                    document.getElementById(id).style.display = \"block\";\r\n                }\r\n\r\n               if (parseInt(dados[2]) !== 0) {\r\n                   \r\n                    id = \"vel\"+w;\r\n                    let vel = numbertoBytes(dados[2]*1000);\r\n                    document.getElementById(id).textContent = vel;\r\n                    document.getElementById(id).style.display = \"block\";\r\n                } else {\r\n                    id = \"vel\"+w;\r\n                    document.getElementById(id).style.display = \"none\";               \r\n                }\r\n\r\n                id = \"interface\"+w;\r\n                let iface = dados[0];\r\n                document.getElementById(id).textContent = iface;\r\n                document.getElementById(id).style.display = \"block\";    \r\n                \r\n                w++;\r\n                total++;\r\n            }            \r\n\r\n            if (dados[3] === \"WANMAIS\") {\r\n                document.getElementById(\"nuveminternet\").style.display = \"block\";\r\n                document.getElementById(\"textointernet\").style.display = \"block\";\r\n                \r\n                id = \"ccto\"+w;\r\n                document.getElementById(id).style.display = \"block\";\r\n\r\n                if (dados[1] !== \"0.0.0.0/24\") {\r\n                    id = \"ip\"+w;\r\n                    document.getElementById(id).textContent = dados[1];\r\n                    document.getElementById(id).style.display = \"block\";\r\n                }\r\n\r\n               if (parseInt(dados[2]) !== 0) { \r\n                   \r\n                    id = \"vel\"+w;\r\n                    let vel = dados[2]/1000 + \" Mbps\";\r\n                    document.getElementById(id).textContent = vel;\r\n                    document.getElementById(id).style.display = \"block\";\r\n                } else {\r\n                    id = \"vel\"+w;\r\n                    document.getElementById(id).style.display = \"none\";               \r\n                }\r\n\r\n                id = \"interface\"+w;\r\n                let iface = dados[0];\r\n                document.getElementById(id).textContent = iface;\r\n                document.getElementById(id).style.display = \"block\";    \r\n                \r\n                w++;\r\n                total++;\r\n            }\r\n            \r\n        }\r\n            \r\n    }\r\n    \r\n});    \r\n\r\n\r\nif (total === 0) {\r\n    \r\n    document.getElementById(\"router\").style.display = \"none\";\r\n    document.getElementById(\"switchcentral\").style.display = \"none\";\r\n    document.getElementById(\"routerswitch\").style.display = \"none\";\r\n    \r\n    document.getElementById(\"aviso\").textContent = \"Sem informação \";\r\n    document.getElementById(\"aviso\").style.display = \"block\";\r\n    //alert(\"Sem pontos para o cliente \"+ cliente);\r\n}\r\n\r\nfunction numbertoBytes(bytes) {\r\n    let unidade = ['bps', 'Kbps', 'Mbps', 'Gbps', 'Tbps', 'Pbps'];\r\n\r\n    let m = 0;\r\n    \r\n    for (m = 0; bytes >= 1000; m++) {\r\n        bytes /= 1000;\r\n    }\r\n\r\n    return bytes.toFixed(1) + ' ' + unidade[m];\r\n}\r\n\r\n\r\n// +-----------------------------------------------------------------+\r\n// | Forma antiga --> sao geradas figuras SVG e as instruçoes abaixo |\r\n// | exibem a figura. O SELECT esta mais abaixo                      |\r\n// +-----------------------------------------------------------------+\r\n// +-----------------------------------------------------------------+\r\n// | Atualizado em: 24/02/2021                                       |\r\n// | Dia do mes incluido na formacao do nome do SVG pois a topologia |\r\n// | fica no cache.                                                  |\r\n// | Programa que cria as figuras SVG esta na maquina WEB:           |\r\n// | /srv/www/cgi-bin/Opgdr/Topologia                                |\r\n// +-----------------------------------------------------------------+\r\n\r\n/*\r\nvar s = Snap(svgnode);\r\nvar paths = s.selectAll('path');\r\n\r\nvar date = new Date();\r\nvar day = date.getDate();           // Dia do mes corrente\r\n\r\n\r\n\r\nctrl.data.forEach((item) => {\r\n    \r\n    // Deleta todos os elementos para evitar sobreposicao das figuras\r\n    s.selectAll(\"*\").remove();\r\n    \r\n    let valor = item.datapoints.map((d) => d[0]);\r\n    //let color;\r\n\r\n    //alert(item.alias +\"--\"+ valor);\r\n    \r\n    // +--------------------------------------------------------------------------+\r\n    // |      Carrega a figura de acordo com o resultado do SELECT A              |\r\n    // | Abre a possibilidade de montarmos topologias dinamicamente por script    |\r\n    // +--------------------------------------------------------------------------+\r\n    if (item.alias == \"Ponto\") {\r\n        var g = s.g();\r\n            \r\n            \r\n        var image = g.image(\"http://gdp.serpro/graficos/\"+valor+\"_\"+day+\".svg\", 0,0, 800,650 );\r\n        var clone = image.clone();\r\n        //clone.transform('t100,200r45');\r\n        //alert(clone);\r\n        \r\n    }\r\n\r\n\r\n  \r\n});   // +--------------------------------------------------------------------------+\r\n\r\n*/\r\n//SELECT '$localidade' as \"Ponto\", now() as time",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "pluginVersion": "7.3.7",
+      "repositories": {
+        "rtmaster": {
+          "description": "simple examples",
+          "items": [
+            {
+              "category": "arrows",
+              "description": "Arrow facing up",
+              "name": "arrow-up",
+              "path": "rtmaster/arrows/arrow-up.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down",
+              "name": "arrow-down",
+              "path": "rtmaster/arrows/arrow-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing right",
+              "name": "arrow-right",
+              "path": "rtmaster/arrows/arrow-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left",
+              "name": "arrow-left",
+              "path": "rtmaster/arrows/arrow-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up right",
+              "name": "arrow-up-right",
+              "path": "rtmaster/arrows/arrow-up-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up left",
+              "name": "arrow-up-left",
+              "path": "rtmaster/arrows/arrow-up-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down left",
+              "name": "arrow-down-left",
+              "path": "rtmaster/arrows/arrow-down-left.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing down right",
+              "name": "arrow-down-right",
+              "path": "rtmaster/arrows/arrow-down-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing left right",
+              "name": "arrow-left-right",
+              "path": "rtmaster/arrows/arrow-left-right.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down",
+              "name": "arrow-up-down",
+              "path": "rtmaster/arrows/arrow-up-down.svg"
+            },
+            {
+              "category": "arrows",
+              "description": "Arrow facing up down left right",
+              "name": "arrow-up-down-left-right",
+              "path": "rtmaster/arrows/arrow-up-down-left-right.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Factory",
+              "name": "factory",
+              "path": "rtmaster/facilities/factory.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Jackup",
+              "name": "jackup",
+              "path": "rtmaster/facilities/jackup.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Plant",
+              "name": "plant",
+              "path": "rtmaster/facilities/plant.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Semisub",
+              "name": "semisub",
+              "path": "rtmaster/facilities/semisub.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Ship",
+              "name": "ship",
+              "path": "rtmaster/facilities/ship.svg"
+            },
+            {
+              "category": "facilities",
+              "description": "Truck",
+              "name": "truck",
+              "path": "rtmaster/facilities/truck.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Light Bulb",
+              "name": "light-bulb",
+              "path": "rtmaster/indicators/light-bulb.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Green Light Indicator",
+              "name": "light-green",
+              "path": "rtmaster/indicators/light-green.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Orange Light Indicator",
+              "name": "light-orange",
+              "path": "rtmaster/indicators/light-orange.svg"
+            },
+            {
+              "category": "indicators",
+              "description": "Red Light Indicator",
+              "name": "light-red",
+              "path": "rtmaster/indicators/light-red.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Compressor",
+              "name": "compressor",
+              "path": "rtmaster/industrial/compressor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Derrick",
+              "name": "derrick",
+              "path": "rtmaster/industrial/derrick.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Heat Exchanger",
+              "name": "heatexchanger",
+              "path": "rtmaster/industrial/heatexchanger.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Motor",
+              "name": "motor",
+              "path": "rtmaster/industrial/motor.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Pump",
+              "name": "pump",
+              "path": "rtmaster/industrial/pump.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Tank",
+              "name": "tank-horizontal",
+              "path": "rtmaster/industrial/tank-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Tank",
+              "name": "tank-vertical",
+              "path": "rtmaster/industrial/tank-vertical.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Turbine",
+              "name": "turbine",
+              "path": "rtmaster/industrial/turbine.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Horizontal Vessel",
+              "name": "vessel-horizontal",
+              "path": "rtmaster/industrial/vessel-horizontal.svg"
+            },
+            {
+              "category": "industrial",
+              "description": "Vertical Vessel",
+              "name": "vessel-vertical",
+              "path": "rtmaster/industrial/vessel-vertical.svg"
+            },
+            {
+              "category": "letters",
+              "description": "A",
+              "name": "A",
+              "path": "rtmaster/letters/letter-a.svg"
+            },
+            {
+              "category": "letters",
+              "description": "B",
+              "name": "B",
+              "path": "rtmaster/letters/letter-b.svg"
+            },
+            {
+              "category": "letters",
+              "description": "C",
+              "name": "C",
+              "path": "rtmaster/letters/letter-c.svg"
+            },
+            {
+              "category": "letters",
+              "description": "D",
+              "name": "D",
+              "path": "rtmaster/letters/letter-d.svg"
+            },
+            {
+              "category": "letters",
+              "description": "E",
+              "name": "E",
+              "path": "rtmaster/letters/letter-e.svg"
+            },
+            {
+              "category": "letters",
+              "description": "F",
+              "name": "F",
+              "path": "rtmaster/letters/letter-f.svg"
+            },
+            {
+              "category": "letters",
+              "description": "G",
+              "name": "G",
+              "path": "rtmaster/letters/letter-g.svg"
+            },
+            {
+              "category": "letters",
+              "description": "H",
+              "name": "H",
+              "path": "rtmaster/letters/letter-h.svg"
+            },
+            {
+              "category": "letters",
+              "description": "I",
+              "name": "I",
+              "path": "rtmaster/letters/letter-i.svg"
+            },
+            {
+              "category": "letters",
+              "description": "J",
+              "name": "J",
+              "path": "rtmaster/letters/letter-j.svg"
+            },
+            {
+              "category": "letters",
+              "description": "K",
+              "name": "K",
+              "path": "rtmaster/letters/letter-k.svg"
+            },
+            {
+              "category": "letters",
+              "description": "L",
+              "name": "L",
+              "path": "rtmaster/letters/letter-l.svg"
+            },
+            {
+              "category": "letters",
+              "description": "M",
+              "name": "M",
+              "path": "rtmaster/letters/letter-m.svg"
+            },
+            {
+              "category": "letters",
+              "description": "N",
+              "name": "N",
+              "path": "rtmaster/letters/letter-n.svg"
+            },
+            {
+              "category": "letters",
+              "description": "O",
+              "name": "O",
+              "path": "rtmaster/letters/letter-o.svg"
+            },
+            {
+              "category": "letters",
+              "description": "P",
+              "name": "P",
+              "path": "rtmaster/letters/letter-p.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Q",
+              "name": "Q",
+              "path": "rtmaster/letters/letter-q.svg"
+            },
+            {
+              "category": "letters",
+              "description": "R",
+              "name": "R",
+              "path": "rtmaster/letters-letter-r.svg"
+            },
+            {
+              "category": "letters",
+              "description": "S",
+              "name": "S",
+              "path": "rtmaster/letters/letter-s.svg"
+            },
+            {
+              "category": "letters",
+              "description": "T",
+              "name": "T",
+              "path": "rtmaster/letters/letter-t.svg"
+            },
+            {
+              "category": "letters",
+              "description": "U",
+              "name": "U",
+              "path": "rtmaster/letters/letter-u.svg"
+            },
+            {
+              "category": "letters",
+              "description": "V",
+              "name": "V",
+              "path": "rtmaster/letters/letter-v.svg"
+            },
+            {
+              "category": "letters",
+              "description": "W",
+              "name": "W",
+              "path": "rtmaster/letters/letter-w.svg"
+            },
+            {
+              "category": "letters",
+              "description": "X",
+              "name": "X",
+              "path": "rtmaster/letters/letter-x.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Y",
+              "name": "Y",
+              "path": "rtmaster/letters/letter-y.svg"
+            },
+            {
+              "category": "letters",
+              "description": "Z",
+              "name": "Z",
+              "path": "rtmaster/letters/letter-z.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Laboratory Flask",
+              "name": "flask",
+              "path": "rtmaster/meters/flask.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Flowmeter",
+              "name": "flowmeter",
+              "path": "rtmaster/meters/flowmeter.svg"
+            },
+            {
+              "category": "meters",
+              "description": "Gauge",
+              "name": "gauge",
+              "path": "rtmaster/meters/gauge.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "0",
+              "name": "0",
+              "path": "rtmaster/numbers/number-0.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "1",
+              "name": "1",
+              "path": "rtmaster/numbers/number-1.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "2",
+              "name": "2",
+              "path": "rtmaster/numbers/number-2.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "3",
+              "name": "3",
+              "path": "rtmaster/numbers/number-3.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "4",
+              "name": "4",
+              "path": "rtmaster/numbers/number-4.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "5",
+              "name": "5",
+              "path": "rtmaster/numbers/number-5.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "6",
+              "name": "6",
+              "path": "rtmaster/numbers/number-6.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "7",
+              "name": "7",
+              "path": "rtmaster/numbers/number-7.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "8",
+              "name": "8",
+              "path": "rtmaster/numbers/number-8.svg"
+            },
+            {
+              "category": "numbers",
+              "description": "9",
+              "name": "9",
+              "path": "rtmaster/numbers/number-9.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down",
+              "name": "pipe-curve-down",
+              "path": "rtmaster/pipes/pipe-curve-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down left",
+              "name": "pipe-curve-down-left",
+              "path": "rtmaster/pipes/pipe-curve-down-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve down right",
+              "name": "pipe-curve-down-right",
+              "path": "rtmaster/pipes/pipe-curve-down-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve left",
+              "name": "pipe-curve-left",
+              "path": "rtmaster/pipes/pipe-curve-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve right",
+              "name": "pipe-curve-right",
+              "path": "rtmaster/pipes/pipe-curve-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up",
+              "name": "pipe-curve-up",
+              "path": "rtmaster/pipes/pipe-curve-up.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up left",
+              "name": "pipe-curve-up-left",
+              "path": "rtmaster/pipes/pipe-curve-up-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe curve up right",
+              "name": "pipe-curve-up-right",
+              "path": "rtmaster/pipes/pipe-curve-up-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal left",
+              "name": "pipe-diagonal-left",
+              "path": "rtmaster/pipes/pipe-diagonal-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe diagonal right",
+              "name": "pipe-diagonal-right",
+              "path": "rtmaster/pipes/pipe-diagonal-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange horizontal",
+              "name": "pipe-flange-horizontal",
+              "path": "rtmaster/pipes/pipe-flange-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange intersection",
+              "name": "pipe-flange-intersection",
+              "path": "rtmaster/pipes/pipe-flange-intersection.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe flange vertical",
+              "name": "pipe-flange-vertical",
+              "path": "rtmaster/pipes/pipe-flange-vertical.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe horizontal",
+              "name": "pipe-horizontal",
+              "path": "rtmaster/pipes/pipe-horizontal.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee down",
+              "name": "pipe-tee-down",
+              "path": "rtmaster/pipes/pipe-tee-down.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee left",
+              "name": "pipe-tee-left",
+              "path": "rtmaster/pipes/pipe-tee-left.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee right",
+              "name": "pipe-tee-right",
+              "path": "rtmaster/pipes/pipe-tee-right.svg"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe tee up",
+              "name": "pipe-tee-up",
+              "path": "rtmaster/pipes/pipe-tee-up"
+            },
+            {
+              "category": "pipes",
+              "description": "Pipe vertical",
+              "name": "pipe-vertical",
+              "path": "rtmaster/pipes/pipe-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Circle",
+              "name": "circle",
+              "path": "rtmaster/shapes/circle.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Gear",
+              "name": "gear",
+              "path": "rtmaster/shapes/gear.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal",
+              "name": "line-horizontal",
+              "path": "rtmaster/shapes/line-horizontal.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow left",
+              "name": "line-horizontal-arrow-left",
+              "path": "rtmaster/shapes/line-horizontal-arrow-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line horizontal arrow right",
+              "name": "line-horizontal-arrow-right",
+              "path": "rtmaster/shapes/line-horizontal-arrow-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical",
+              "name": "line-vertical",
+              "path": "rtmaster/shapes/line-vertical.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow down",
+              "name": "line-vertical-arrow-down",
+              "path": "rtmaster/shapes/line-vertical-arrow-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Line vertical arrow up",
+              "name": "line-vertical-arrow-up",
+              "path": "rtmaster/shapes/line-vertical-arrow-up.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Square",
+              "name": "square",
+              "path": "rtmaster/shapes/square.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle down",
+              "name": "triangle-down",
+              "path": "rtmaster/shapes/triangle-down.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle left",
+              "name": "triangle-left",
+              "path": "rtmaster/shapes/triangle-left.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle right",
+              "name": "triangle-right",
+              "path": "rtmaster/shapes/triangle-right.svg"
+            },
+            {
+              "category": "shapes",
+              "description": "Triangle-up",
+              "name": "triangle-up",
+              "path": "rtmaster/shapes/triangle-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve Horizontal",
+              "name": "valve-horizontal",
+              "path": "rtmaster/valves/valve-horizontal.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve left right",
+              "name": "valve-left-right",
+              "path": "rtmaster/valves/valve-left-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round down",
+              "name": "valve-round-down",
+              "path": "rtmaster/valves/valve-round-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round left",
+              "name": "valve-round-left",
+              "path": "rtmaster/valves/valve-round-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round right",
+              "name": "valve-round-right",
+              "path": "rtmaster/valves/valve-round-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve round up",
+              "name": "valve-round-up",
+              "path": "rtmaster/valves/valve-round-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square down",
+              "name": "valve-square-down",
+              "path": "rtmaster/valves/valve-square-down.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square left",
+              "name": "valve-square-left",
+              "path": "rtmaster/valves/valve-square-left.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square right",
+              "name": "valve-square-right",
+              "path": "rtmaster/valves/valve-square-right.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve square up",
+              "name": "valve-square-up",
+              "path": "rtmaster/valves/valve-square-up.svg"
+            },
+            {
+              "category": "valves",
+              "description": "Valve vertical",
+              "name": "valve-vertical",
+              "path": "rtmaster/valves/valve-vertical"
+            }
+          ],
+          "license": "Apache 2.0",
+          "url": "https://github.com/rtmaster"
+        }
+      },
+      "svgBuilderData": {
+        "elements": [],
+        "height": "100%",
+        "viewport": {
+          "height": 1000,
+          "width": 1000,
+          "x": 0,
+          "y": 0
+        },
+        "width": "100%"
+      },
+      "svg_data": "\r\n<?xml version=\"1.0\"?>\r\n<svg baseprofile=\"tiny\" fill=\"none\" height=\"100%\" stroke=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" version=\"1.2\" width=\"100%\" viewBox=\"0 0 1200 500\"  xmlns=\"http://www.w3.org/2000/svg\">\r\n<g id=\"ccto5\">\r\n<line id=\"\" x1=\"166.666666666667\" y1=\"145\" x2=\"250\" y2=\"50\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"250\" y1=\"50\" x2=\"470\" y2=\"50\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"470\" y1=\"50\" x2=\"520\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"vel5\" x=\"250\" y=\"45\" fill=\"#cfcfcf\" transform=\"rotate(0 250,45)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">200Mbps  5</text>\r\n<text id=\"interface5\" x=\"470\" y=\"45\" fill=\"#cfcfcf\" transform=\"rotate(0 470,45)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip5\" x=\"470\" y=\"65\" fill=\"#cfcfcf\" transform=\"rotate(0 470,65)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">192.168.100.100/22</text>\r\n</g>\r\n<g id=\"ccto11\">\r\n<line id=\"\" x1=\"570\" y1=\"145\" x2=\"620\" y2=\"50\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"620\" y1=\"50\" x2=\"840\" y2=\"50\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"840\" y1=\"50\" x2=\"956.666666666667\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"interface11\" x=\"620\" y=\"45\" fill=\"#cfcfcf\" transform=\"rotate(0 620,45)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip11\" x=\"620\" y=\"65\" fill=\"#cfcfcf\" transform=\"rotate(0 620,65)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">192.168.100.100/22</text>\r\n<text id=\"vel11\" x=\"840\" y=\"45\" fill=\"#cfcfcf\" transform=\"rotate(0 840,45)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">200Mbps  11</text>\r\n</g>\r\n<g id=\"ccto3\">\r\n<line id=\"\" x1=\"166.666666666667\" y1=\"145\" x2=\"250\" y2=\"90\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"250\" y1=\"90\" x2=\"470\" y2=\"90\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"470\" y1=\"90\" x2=\"520\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"vel3\" x=\"250\" y=\"85\" fill=\"#cfcfcf\" transform=\"rotate(0 250,85)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">200Mbps  3</text>\r\n<text id=\"interface3\" x=\"470\" y=\"85\" fill=\"#cfcfcf\" transform=\"rotate(0 470,85)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip3\" x=\"470\" y=\"105\" fill=\"#cfcfcf\" transform=\"rotate(0 470,105)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">192.168.100.100/22</text>\r\n</g>\r\n<g id=\"ccto9\">\r\n<line id=\"\" x1=\"570\" y1=\"145\" x2=\"620\" y2=\"90\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"620\" y1=\"90\" x2=\"840\" y2=\"90\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"840\" y1=\"90\" x2=\"956.666666666667\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"interface9\" x=\"620\" y=\"85\" fill=\"#cfcfcf\" transform=\"rotate(0 620,85)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip9\" x=\"620\" y=\"105\" fill=\"#cfcfcf\" transform=\"rotate(0 620,105)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">192.168.100.100/22</text>\r\n<text id=\"vel9\" x=\"840\" y=\"85\" fill=\"#cfcfcf\" transform=\"rotate(0 840,85)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">200Mbps  9</text>\r\n</g>\r\n<g id=\"ccto1\">\r\n<line id=\"\" x1=\"166.666666666667\" y1=\"145\" x2=\"250\" y2=\"130\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"250\" y1=\"130\" x2=\"470\" y2=\"130\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"470\" y1=\"130\" x2=\"520\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"vel1\" x=\"250\" y=\"125\" fill=\"#cfcfcf\" transform=\"rotate(0 250,125)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">200Mbps  1</text>\r\n<text id=\"interface1\" x=\"470\" y=\"125\" fill=\"#cfcfcf\" transform=\"rotate(0 470,125)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip1\" x=\"470\" y=\"145\" fill=\"#cfcfcf\" transform=\"rotate(0 470,145)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">192.168.100.100/22</text>\r\n</g>\r\n<g id=\"ccto7\">\r\n<line id=\"\" x1=\"570\" y1=\"145\" x2=\"620\" y2=\"130\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"620\" y1=\"130\" x2=\"840\" y2=\"130\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"840\" y1=\"130\" x2=\"956.666666666667\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"interface7\" x=\"620\" y=\"125\" fill=\"#cfcfcf\" transform=\"rotate(0 620,125)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip7\" x=\"620\" y=\"145\" fill=\"#cfcfcf\" transform=\"rotate(0 620,145)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">192.168.100.100/22</text>\r\n<text id=\"vel7\" x=\"840\" y=\"125\" fill=\"#cfcfcf\" transform=\"rotate(0 840,125)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">200Mbps  7</text>\r\n</g>\r\n<g id=\"ccto2\">\r\n<line id=\"\" x1=\"166.666666666667\" y1=\"145\" x2=\"250\" y2=\"170\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"250\" y1=\"170\" x2=\"470\" y2=\"170\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"470\" y1=\"170\" x2=\"520\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"vel2\" x=\"250\" y=\"165\" fill=\"#cfcfcf\" transform=\"rotate(0 250,165)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">200Mbps</text>\r\n<text id=\"interface2\" x=\"470\" y=\"165\" fill=\"#cfcfcf\" transform=\"rotate(0 470,165)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip2\" x=\"470\" y=\"185\" fill=\"#cfcfcf\" transform=\"rotate(0 470,185)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">192.168.100.200/22</text>\r\n</g>\r\n<g id=\"ccto8\">\r\n<line id=\"\" x1=\"570\" y1=\"145\" x2=\"620\" y2=\"170\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"620\" y1=\"170\" x2=\"840\" y2=\"170\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"840\" y1=\"170\" x2=\"956.666666666667\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"interface8\" x=\"620\" y=\"165\" fill=\"#cfcfcf\" transform=\"rotate(0 620,165)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip8\" x=\"620\" y=\"185\" fill=\"#cfcfcf\" transform=\"rotate(0 620,185)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">192.168.100.100/22</text>\r\n<text id=\"vel8\" x=\"840\" y=\"165\" fill=\"#cfcfcf\" transform=\"rotate(0 840,165)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">200Mbps  8</text>\r\n</g>\r\n<g id=\"ccto4\">\r\n<line id=\"\" x1=\"166.666666666667\" y1=\"145\" x2=\"250\" y2=\"210\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"250\" y1=\"210\" x2=\"470\" y2=\"210\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"470\" y1=\"210\" x2=\"520\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"vel4\" x=\"250\" y=\"205\" fill=\"#cfcfcf\" transform=\"rotate(0 250,205)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">200Mbps</text>\r\n<text id=\"interface4\" x=\"470\" y=\"205\" fill=\"#cfcfcf\" transform=\"rotate(0 470,205)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip4\" x=\"470\" y=\"225\" fill=\"#cfcfcf\" transform=\"rotate(0 470,225)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">192.168.100.200/22</text>\r\n</g>\r\n<g id=\"ccto10\">\r\n<line id=\"\" x1=\"570\" y1=\"145\" x2=\"620\" y2=\"210\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"620\" y1=\"210\" x2=\"840\" y2=\"210\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"840\" y1=\"210\" x2=\"956.666666666667\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"interface10\" x=\"620\" y=\"205\" fill=\"#cfcfcf\" transform=\"rotate(0 620,205)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip10\" x=\"620\" y=\"225\" fill=\"#cfcfcf\" transform=\"rotate(0 620,225)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">192.168.100.100/22</text>\r\n<text id=\"vel10\" x=\"840\" y=\"205\" fill=\"#cfcfcf\" transform=\"rotate(0 840,205)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">200Mbps  10</text>\r\n</g>\r\n<g id=\"ccto6\">\r\n<line id=\"\" x1=\"166.666666666667\" y1=\"145\" x2=\"250\" y2=\"250\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"250\" y1=\"250\" x2=\"470\" y2=\"250\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"470\" y1=\"250\" x2=\"520\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"vel6\" x=\"250\" y=\"245\" fill=\"#cfcfcf\" transform=\"rotate(0 250,245)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">200Mbps</text>\r\n<text id=\"interface6\" x=\"470\" y=\"245\" fill=\"#cfcfcf\" transform=\"rotate(0 470,245)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip6\" x=\"470\" y=\"265\" fill=\"#cfcfcf\" transform=\"rotate(0 470,265)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">192.168.100.200/22</text>\r\n</g>\r\n<g id=\"ccto12\">\r\n<line id=\"\" x1=\"570\" y1=\"145\" x2=\"620\" y2=\"250\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"620\" y1=\"250\" x2=\"840\" y2=\"250\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<line id=\"\" x1=\"840\" y1=\"250\" x2=\"956.666666666667\" y2=\"145\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<text id=\"interface12\" x=\"620\" y=\"245\" fill=\"#cfcfcf\" transform=\"rotate(0 620,245)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">TenGigaEthernet0/0/1.1234</text>\r\n<text id=\"ip12\" x=\"620\" y=\"265\" fill=\"#cfcfcf\" transform=\"rotate(0 620,265)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">192.168.100.100/22</text>\r\n<text id=\"vel12\" x=\"840\" y=\"245\" fill=\"#cfcfcf\" transform=\"rotate(0 840,245)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"end\">200Mbps  12</text>\r\n</g>\r\n<text id=\"rede1\" x=\"250\" y=\"300\" fill=\"#cfcfcf\" transform=\"rotate(0 250,300)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 1:</text>\r\n<text id=\"interfacelan1\" x=\"300\" y=\"300\" fill=\"#cfcfcf\" transform=\"rotate(0 300,300)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 1:</text>\r\n<text id=\"lan1\" x=\"250\" y=\"315\" fill=\"#cfcfcf\" transform=\"rotate(0 250,315)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 1:</text>\r\n<text id=\"rede3\" x=\"250\" y=\"335\" fill=\"#cfcfcf\" transform=\"rotate(0 250,335)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 3:</text>\r\n<text id=\"interfacelan3\" x=\"300\" y=\"335\" fill=\"#cfcfcf\" transform=\"rotate(0 300,335)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 3:</text>\r\n<text id=\"lan3\" x=\"250\" y=\"350\" fill=\"#cfcfcf\" transform=\"rotate(0 250,350)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 3:</text>\r\n<text id=\"rede5\" x=\"250\" y=\"370\" fill=\"#cfcfcf\" transform=\"rotate(0 250,370)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 5:</text>\r\n<text id=\"interfacelan5\" x=\"300\" y=\"370\" fill=\"#cfcfcf\" transform=\"rotate(0 300,370)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 5:</text>\r\n<text id=\"lan5\" x=\"250\" y=\"385\" fill=\"#cfcfcf\" transform=\"rotate(0 250,385)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 5:</text>\r\n<text id=\"rede7\" x=\"250\" y=\"405\" fill=\"#cfcfcf\" transform=\"rotate(0 250,405)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 7:</text>\r\n<text id=\"interfacelan7\" x=\"300\" y=\"405\" fill=\"#cfcfcf\" transform=\"rotate(0 300,405)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 7:</text>\r\n<text id=\"lan7\" x=\"250\" y=\"420\" fill=\"#cfcfcf\" transform=\"rotate(0 250,420)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 7:</text>\r\n<text id=\"rede9\" x=\"250\" y=\"440\" fill=\"#cfcfcf\" transform=\"rotate(0 250,440)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 9:</text>\r\n<text id=\"interfacelan9\" x=\"300\" y=\"440\" fill=\"#cfcfcf\" transform=\"rotate(0 300,440)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 9:</text>\r\n<text id=\"lan9\" x=\"250\" y=\"455\" fill=\"#cfcfcf\" transform=\"rotate(0 250,455)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 9:</text>\r\n<text id=\"rede11\" x=\"250\" y=\"475\" fill=\"#cfcfcf\" transform=\"rotate(0 250,475)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 11:</text>\r\n<text id=\"interfacelan11\" x=\"300\" y=\"475\" fill=\"#cfcfcf\" transform=\"rotate(0 300,475)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 11:</text>\r\n<text id=\"lan11\" x=\"250\" y=\"490\" fill=\"#cfcfcf\" transform=\"rotate(0 250,490)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 11:</text>\r\n<text id=\"rede2\" x=\"620\" y=\"300\" fill=\"#cfcfcf\" transform=\"rotate(0 620,300)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 2:</text>\r\n<text id=\"interfacelan2\" x=\"670\" y=\"300\" fill=\"#cfcfcf\" transform=\"rotate(0 670,300)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 2:</text>\r\n<text id=\"lan2\" x=\"620\" y=\"315\" fill=\"#cfcfcf\" transform=\"rotate(0 620,315)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 2:</text>\r\n<text id=\"rede4\" x=\"620\" y=\"335\" fill=\"#cfcfcf\" transform=\"rotate(0 620,335)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 4:</text>\r\n<text id=\"interfacelan4\" x=\"670\" y=\"335\" fill=\"#cfcfcf\" transform=\"rotate(0 670,335)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 4:</text>\r\n<text id=\"lan4\" x=\"620\" y=\"350\" fill=\"#cfcfcf\" transform=\"rotate(0 620,350)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 4:</text>\r\n<text id=\"rede6\" x=\"620\" y=\"370\" fill=\"#cfcfcf\" transform=\"rotate(0 620,370)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 6:</text>\r\n<text id=\"interfacelan6\" x=\"670\" y=\"370\" fill=\"#cfcfcf\" transform=\"rotate(0 670,370)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 6:</text>\r\n<text id=\"lan6\" x=\"620\" y=\"385\" fill=\"#cfcfcf\" transform=\"rotate(0 620,385)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 6:</text>\r\n<text id=\"rede8\" x=\"620\" y=\"405\" fill=\"#cfcfcf\" transform=\"rotate(0 620,405)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 8:</text>\r\n<text id=\"interfacelan8\" x=\"670\" y=\"405\" fill=\"#cfcfcf\" transform=\"rotate(0 670,405)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 8:</text>\r\n<text id=\"lan8\" x=\"620\" y=\"420\" fill=\"#cfcfcf\" transform=\"rotate(0 620,420)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 8:</text>\r\n<text id=\"rede10\" x=\"620\" y=\"440\" fill=\"#cfcfcf\" transform=\"rotate(0 620,440)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 10:</text>\r\n<text id=\"interfacelan10\" x=\"670\" y=\"440\" fill=\"#cfcfcf\" transform=\"rotate(0 670,440)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 10:</text>\r\n<text id=\"lan10\" x=\"620\" y=\"455\" fill=\"#cfcfcf\" transform=\"rotate(0 620,455)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 10:</text>\r\n<text id=\"rede12\" x=\"620\" y=\"475\" fill=\"#cfcfcf\" transform=\"rotate(0 620,475)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Rede 12:</text>\r\n<text id=\"interfacelan12\" x=\"670\" y=\"475\" fill=\"#cfcfcf\" transform=\"rotate(0 670,475)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">Interface 12:</text>\r\n<text id=\"lan12\" x=\"620\" y=\"490\" fill=\"#cfcfcf\" transform=\"rotate(0 620,490)\" font-family=\"Arial\" font-size=\"11\" text-anchor=\"start\">LAN 12:</text>\r\n<line id=\"routerswitch\" x1=\"545\" y1=\"170\" x2=\"545\" y2=\"305\" stroke=\"#cfcfcf\" stroke-width=\"1\" />\r\n<g id=\"router\">\r\n\t<svg x=\"520\" y=\"120\" width=\"110\" height=\"110\" viewbox=\"0 0 220 220\">\r\n\t\t<g transform=\"rotate(45,50,50)\">\r\n\t\t\t<circle id=\"roteador\" cx=\"50\" cy=\"50\" r=\"50\" fill=\"#007fff\" stroke=\"#007fff\" stroke-width=\"1\">\r\n\t\t\t\t<title id=\"titlerouter\">Router</title>\r\n\t\t\t</circle>\r\n\t\t<polygon points=\"45,60 45,80 35,80 50,95 65,80 55,80 55,60\" fill=\"white\" stroke=\"none\" />\r\n\t\t<polygon points=\"45,40 55,40 55,20 65,20 50,5 35,20 45,20\" fill=\"white\" stroke=\"none\" />\r\n\t\t<polygon points=\"60,50 75,65 75,55 95,55 95,45 75,45 75,35\" fill=\"white\" stroke=\"none\" />\r\n\t\t<polygon points=\"40,50 25,35 25,45 5,45 5,55 25,55 25,65\" fill=\"white\" stroke=\"none\" />\r\n\t\t</g>\r\n\t</svg>\r\n</g>\r\n<!-- <a id=\"linkswitchcentral\" href=\"\"> -->\r\n    <g id=\"switchcentral\">\r\n\t<svg x=\"510\" y=\"300\" width=\"220\" height=\"220\" viewBox=\"0 0 440 440\" >\r\n\t\t<rect id=\"switch\" x=\"10\" y=\"7\" width=\"110\" height=\"100\" rx=\"5\" fill=\"#007fff\" stroke=\"#444444\" stroke-width=\"2\"/>\r\n\t\t<polyline points=\"15,26 30,11 30,21 60,21 60,31 30,31 30,41\" fill=\"#ffffff\" stroke=\"none\"/>\r\n\t\t<polyline points=\"18,70 33,55 33,65 63,65 63,75 33,75 33,85\" fill=\"#ffffff\" stroke=\"none\"/>\r\n\t\t<polyline points=\"65,26 80,11 80,21 110,21 110,31 80,31 80,41\" fill=\"#ffffff\" stroke=\"none\" transform=\"rotate(180,88,36)\"/>\r\n\t\t<polyline points=\"65,26 80,11 80,21 110,21 110,31 80,31 80,41\" fill=\"#ffffff\" stroke=\"none\" transform=\"rotate(180,90,56)\"/>\r\n\t</svg>\r\n    </g>\r\n<!-- </a> -->\r\n<g id=\"nuveminternet\"><svg x=\"86.6666666666667\" y=\"105\"><path d=\"M 30 20 C 6 20 0 40 19.2 44 C 0 52.8 21.6 72 37.2 64 C 48 80 84 80 96 64 C 120 64 120 48 105 40 C 120 24 96 8 75 16 C 60 4 36 4 30 20 Z\" fill=\"#3366ff\" stroke=\"#005073\" stroke-miterlimit=\"10\" pointer-events=\"all\"/></svg></g>\r\n<text id=\"textointernet\" x=\"116.666666666667\" y=\"150\" fill=\"#ffffff\" transform=\"rotate(0 116.666666666667,150)\" font-family=\"Arial\" font-size=\"13\" text-anchor=\"start\">WANMAIS</text>\r\n<g id=\"nuvemmpls\"><svg x=\"876.666666666667\" y=\"105\"><path d=\"M 30 20 C 6 20 0 40 19.2 44 C 0 52.8 21.6 72 37.2 64 C 48 80 84 80 96 64 C 120 64 120 48 105 40 C 120 24 96 8 75 16 C 60 4 36 4 30 20 Z\" fill=\"#3366ff\" stroke=\"#005073\" stroke-miterlimit=\"10\" pointer-events=\"all\"/></svg></g>\r\n<text id=\"textompls\" x=\"910.666666666667\" y=\"150\" fill=\"#ffffff\" transform=\"rotate(0 910.666666666667,150)\" font-family=\"Arial\" font-size=\"13\" text-anchor=\"start\">ACESSO</text>\r\n<text id=\"aviso\" x=\"400\" y=\"100\" fill=\"#ffffff\" transform=\"rotate(0 916.666666666667,145)\" font-family=\"Arial\" font-size=\"15\" text-anchor=\"start\"></text>\r\n</svg>\r\n",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "SELECT CONCAT('MODELO','___','$uf','___','$localidade','___','$hostname','___','$alias') as \"DADOS\", now() as time",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        },
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": false,
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select  CONCAT(iface,'___', ip,'___', kbps,'___', classe) as \"INFO\", now() as time from rede where hostname = '$hostname' and ativo = 't' group by iface, ip, kbps, classe order by classe;",
+          "refId": "B",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Topologia",
+      "transparent": true,
+      "type": "marcuscalidus-svg-panel",
+      "useSVGBuilder": false
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "select distinct substring(p.nome::text,1,2) from ponto p, cliente c where substring(p.id::text,1,4) = c.id::text and c.sigla = 'MODELO';",
+        "hide": 0,
+        "includeAll": false,
+        "label": "UF",
+        "multi": false,
+        "name": "uf",
+        "options": [],
+        "query": "select distinct substring(p.nome::text,1,2) from ponto p, cliente c where substring(p.id::text,1,4) = c.id::text and c.sigla = 'MODELO';",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "select p.nome from ponto p, cliente c where substring(p.id::text,1,4) = c.id::text and substring(p.nome::text,1,2) = '$uf' and c.sigla = 'MODELO' order by 1;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Localidade",
+        "multi": false,
+        "name": "localidade",
+        "options": [],
+        "query": "select p.nome from ponto p, cliente c where substring(p.id::text,1,4) = c.id::text and substring(p.nome::text,1,2) = '$uf' and c.sigla = 'MODELO' order by 1;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "select hostname from ponto where nome = '$localidade'",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Hostname",
+        "multi": false,
+        "name": "hostname",
+        "options": [],
+        "query": "select hostname from ponto where nome = '$localidade'",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_GDP_SUPCD}"
+        },
+        "definition": "select alias from ponto where hostname = '$hostname';",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Alias",
+        "multi": false,
+        "name": "alias",
+        "options": [],
+        "query": "select alias from ponto where hostname = '$hostname';",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "TopologiaWANPortalMODELO",
+  "uid": "TopologiaWANPortalMODELO",
+  "version": 1,
+  "weekStart": ""
+}

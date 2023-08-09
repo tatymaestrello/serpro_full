@@ -1,0 +1,816 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_ZABBIX_UNICO",
+      "label": "Zabbix Unico",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "alexanderzobnin-zabbix-datasource",
+      "pluginName": "Zabbix"
+    },
+    {
+      "name": "DS_GDP_SUPCD",
+      "label": "GDP_SUPCD",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    },
+    {
+      "name": "VAR_LOCALIDADE",
+      "type": "constant",
+      "label": "Localidade",
+      "value": "",
+      "description": ""
+    },
+    {
+      "name": "VAR_IDPONTO",
+      "type": "constant",
+      "label": "Id",
+      "value": "",
+      "description": ""
+    },
+    {
+      "name": "VAR_SERVICO",
+      "type": "constant",
+      "label": "Servico",
+      "value": "",
+      "description": ""
+    },
+    {
+      "name": "VAR_APLICACAO",
+      "type": "constant",
+      "label": "Aplicacao",
+      "value": "",
+      "description": ""
+    },
+    {
+      "name": "VAR_UF",
+      "type": "constant",
+      "label": "UF",
+      "value": "",
+      "description": ""
+    },
+    {
+      "name": "VAR_CIRCUITO",
+      "type": "constant",
+      "label": "Circuito",
+      "value": "",
+      "description": ""
+    },
+    {
+      "name": "VAR_INSTANCIA",
+      "type": "constant",
+      "label": "Instancia",
+      "value": "",
+      "description": ""
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "datasource",
+      "id": "alexanderzobnin-zabbix-datasource",
+      "name": "Zabbix",
+      "version": "1.0.0"
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.4"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "table",
+      "name": "Table",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "dashboard",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Voltar",
+      "tooltip": "",
+      "type": "link",
+      "url": "d/ResumoIndicadoresPortalMODELO/resumoindicadoresportalmodelo?orgId=1&var-uf=$uf&var-localidade=$localidade&var-circuito=$circuito"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "${DS_ZABBIX_UNICO}"
+      },
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 16,
+      "options": {
+        "code": {
+          "language": "plaintext",
+          "showLineNumbers": false,
+          "showMiniMap": false
+        },
+        "content": "<font color = #888888 size = 3><center><b>Localidade: ${localidade}</b></center></font>\n<font color = #888888 size = 3><center><b>Serviço ${aplicacao}</b></center></font>       \n\n",
+        "mode": "html"
+      },
+      "pluginVersion": "9.5.4",
+      "targets": [
+        {
+          "format": "time_series",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  horario AS \"time\",\n  txbyte\nFROM recursoswan\nWHERE\n  $__timeFilter(horario)\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "txbyte"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "recursoswan",
+          "timeColumn": "horario",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ],
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "${DS_ZABBIX_UNICO}"
+          }
+        }
+      ],
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 2
+      },
+      "id": 20,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select origem as \"IP\", sum(bytes) as Bytes from fluxomodelo where \n        $__timeFilter(horario) \n    and id_ponto = $idponto \n    and sentido = 'tx' \n    and tag ='$servico' \n    and indexrx ~ '^$instancia$'\n    and indexrx != '0'\n    group by 1 order by 2 desc limit 5\n",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "IPs que Mais Transmitiram (Rede Interna)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 2,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 2
+      },
+      "id": 19,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "destino"
+          }
+        ]
+      },
+      "pluginVersion": "9.5.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select destino as \"IP\", sum(bytes) as Bytes from fluxomodelo where \n        $__timeFilter(horario) \n    and id_ponto = $idponto \n    and sentido = 'rx'\n    and tag = '$servico'\n    and indextx ~ '^$instancia$'\n    and indextx != '0'\n    group by 1 order by 2 desc limit 5",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "IPs que Mais Receberam (Rede interna)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 2,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Tradução IP",
+              "url": "https://who.is/whois-ip/ip-address/${__data.fields[0]}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bytes"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select distinct \n       t.destino as \"IP\"\n     , p.nome as \"Localidade\"\n     , t.bytes as \"Bytes\"\nfrom (\n     select distinct r.hostname, t.destino, t.bytes\n     from (\n          select distinct left(f.id_ponto::text,4)::int as id_cliente, f.destino, sum(f.bytes) as bytes\n            from fluxomodelo f\n           where $__timeFilter(f.horario)\n             and f.id_ponto = '$idponto'\n             and f.sentido = 'tx'\n             and f.tag ='$servico'\n             and f.indexrx ~ '^$instancia$'\n             and f.indexrx != '0'\n           group by 1,2 order by 3 desc\n           limit 10\n     ) t\n     left join rede r on (r.ip::inet >> t.destino::inet and left(r.id::text,4)::int = t.id_cliente and r.tipo = 'LAN')\n     order by 3 desc\n) t\nleft join ponto p on (p.hostname = t.hostname)\norder by 3 desc, 2\n/*\nselect destino as \"IP\", sum(bytes) as Bytes from fluxomodelo where \n        $__timeFilter(horario) \n    and id_ponto = $idponto \n    and sentido = 'tx' \n    and tag ='$servico' \n    and indexrx ~ '^$instancia$'\n    and indexrx != '0'\n    group by 1 order by 2 desc limit 5\n*/    ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Servidores $aplicacao que Mais Transmitiram (Rede Externa)",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 2,
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Tradução IP",
+              "url": "https://who.is/whois-ip/ip-address/${__data.fields[0]}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "IP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bytes"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 21,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "9.5.4",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select distinct \n       t.origem as \"IP\"\n     , p.nome as \"Localidade\"\n     , t.bytes as \"Bytes\"\nfrom (\n     select distinct r.hostname, t.origem, t.bytes\n     from (\n          select distinct left(f.id_ponto::text,4)::int as id_cliente, f.origem, sum(f.bytes) as bytes\n            from fluxomodelo f\n           where $__timeFilter(f.horario)\n             and f.id_ponto = '$idponto'\n             and f.sentido = 'rx'\n             and f.tag ='$servico'\n             and f.indextx ~ '^$instancia$'\n             and f.indextx != '0'\n           group by 1,2 order by 3 desc\n           limit 10\n     ) t\n     left join rede r on (r.ip::inet >> t.origem::inet and left(r.id::text,4)::int = t.id_cliente and r.tipo = 'LAN')\n     order by 3 desc\n) t\nleft join ponto p on (p.hostname = t.hostname)\norder by 3 desc, 2\n/*\nselect origem as \"IP\", sum(bytes) as Bytes from fluxomodelo where \n        $__timeFilter(horario) \n    and id_ponto = $idponto \n    and sentido = 'rx'\n    and tag = '$servico'\n    and indextx ~ '^$instancia$'\n    and indextx != '0'\n    group by 1 order by 2 desc limit 5\n*/    ",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Servidores $aplicacao que Mais Receberam (Rede Externa)",
+      "type": "table"
+    }
+  ],
+  "refresh": "5m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "hide": 2,
+        "label": "Localidade",
+        "name": "localidade",
+        "query": "${VAR_LOCALIDADE}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_LOCALIDADE}",
+          "text": "${VAR_LOCALIDADE}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_LOCALIDADE}",
+            "text": "${VAR_LOCALIDADE}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "label": "Id",
+        "name": "idponto",
+        "query": "${VAR_IDPONTO}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_IDPONTO}",
+          "text": "${VAR_IDPONTO}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_IDPONTO}",
+            "text": "${VAR_IDPONTO}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "label": "Servico",
+        "name": "servico",
+        "query": "${VAR_SERVICO}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_SERVICO}",
+          "text": "${VAR_SERVICO}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_SERVICO}",
+            "text": "${VAR_SERVICO}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "label": "Aplicacao",
+        "name": "aplicacao",
+        "query": "${VAR_APLICACAO}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_APLICACAO}",
+          "text": "${VAR_APLICACAO}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_APLICACAO}",
+            "text": "${VAR_APLICACAO}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "label": "UF",
+        "name": "uf",
+        "query": "${VAR_UF}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_UF}",
+          "text": "${VAR_UF}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_UF}",
+            "text": "${VAR_UF}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "label": "Circuito",
+        "name": "circuito",
+        "query": "${VAR_CIRCUITO}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_CIRCUITO}",
+          "text": "${VAR_CIRCUITO}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_CIRCUITO}",
+            "text": "${VAR_CIRCUITO}",
+            "selected": false
+          }
+        ]
+      },
+      {
+        "hide": 2,
+        "label": "Instancia",
+        "name": "instancia",
+        "query": "${VAR_INSTANCIA}",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "constant",
+        "current": {
+          "value": "${VAR_INSTANCIA}",
+          "text": "${VAR_INSTANCIA}",
+          "selected": false
+        },
+        "options": [
+          {
+            "value": "${VAR_INSTANCIA}",
+            "text": "${VAR_INSTANCIA}",
+            "selected": false
+          }
+        ]
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "DetalhamentoAplicacaoMODELO",
+  "uid": "DetalhamentoAplicacaoMODELO",
+  "version": 1,
+  "weekStart": ""
+}

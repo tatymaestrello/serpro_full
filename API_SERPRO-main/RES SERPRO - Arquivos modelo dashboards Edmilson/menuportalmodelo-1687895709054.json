@@ -1,0 +1,152 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GDP_SUPCD",
+      "label": "GDP_SUPCD",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "aidanmountford-html-panel",
+      "name": "HTML",
+      "version": "0.0.2"
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.4"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "css_data": "*\r\n{\r\n    padding: 0; \r\n    margin: 0;\r\n    box-sizing: border-box;\r\n}\r\n\r\nbody\r\n{\r\n    /*background-image:url(\"background.jpg\");*/\r\n    background-repeat: no-repeat;\r\n    font-family: sans-serif;\r\n    background-size: 100%;\r\n}\r\n\r\n.menu-bar /*display vertical*/\r\n{\r\n    background:#333333;\r\n    text-align: left;\r\n    font-size: 16px;\r\n}\r\n\r\n.menu-bar ul /*display horizontal e navegacao na mesma linha*/\r\n{\r\n    display: inline-flex;\r\n    list-style: none;\r\n    color: #fff;\r\n    text-align: center;\r\n    font-family: cursive;\r\n}\r\n\r\n.menu-bar ul li\r\n{\r\n    width:auto;\r\n    margin:2px;\r\n    padding:16px;\r\n}\r\n\r\n.menu-bar ul li a /*href com a cor branca*/\r\n{\r\n    text-decoration: none;\r\n    color: #fff;\r\n}\r\n\r\n.menu-bar ul li:hover /*alteracao do fundo onmouseover*/\r\n{\r\n    background-color: #777777;\r\n    border-radius: 2px;\r\n}\r\n\r\n.sub-menu-1 /*sub-menu-1 is hidden until the cursor is placed on the menu-bar option containing it*/\r\n{\r\n    display: none;\r\n}\r\n\r\n.menu-bar ul li:hover .sub-menu-1 /*displays the sub-menu-1 when the menu-bar option containing a sublist is hovered upon*/\r\n{\r\n    display: block;\r\n    position: absolute;\r\n    background: #999999;\r\n    margin-top: 15px;\r\n    margin-left: 0px;\r\n}\r\n\r\n.menu-bar ul li:hover .sub-menu-1 ul /*the options of the sub-menu-1 are displayed in vertical blocks*/\r\n{\r\n    display: block;\r\n    margin: 10px;\r\n}\r\n\r\n.menu-bar ul li:hover .sub-menu-1 ul li /*options of the sub-menu-1 are separated with dotted lines*/\r\n{\r\n    width: 250px;\r\n    padding: 10px;\r\n    border-bottom: 2px dotted #fff;\r\n    background: transparent;\r\n    border-radius: 0px;\r\n    text-align: left;\r\n    \r\n    \r\n}\r\n\r\n.menu-bar ul li:hover .sub-menu-1 ul li:last-child /*dotted line is removed for the last option*/\r\n{\r\n    border-bottom: none;\r\n}\r\n\r\n.menu-bar ul li:hover .sub-menu-1 ul li a:hover /*displays the sub-menu-2 when the sub-menu-1 option containing a sublist is hovered upon*/\r\n{\r\n    color: #222;\r\n    \r\n}\r\n\r\n.sub-menu-2 /*sub-menu-2 is hidden until the cursor is placed on the sub-menu-1 option containing it*/\r\n{\r\n    display: none;\r\n    border-radius: 2px;\r\n}\r\n\r\n.hover-me:hover .sub-menu-2 /*the options of the sub-menu-2 are displayed in vertical blocks*/\r\n{\r\n    position: absolute;\r\n    display: block;\r\n    margin-top: -40px;\r\n    margin-left: 150px;\r\n    background: #aaaaaa;\r\n}",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 18,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "html_data": "<div class=\"menu-bar\">\n    <ul>\n        <!--  <li><img id=\"imagem\" src=\"https://www.serpro.gov.br/clientes/imagens/modelo-destaque.png/@@images/b68fb6b6-a5dc-479f-a4fb-2e8382c56d70.png\" width=\"95px\" height=\"70px\" style=\"background-color:#cccccc;\"></img></li> -->\n        <li><font-family=\"Brush Script MT\">MODELO</font></li>\n\n\n        <!-- ARLD00000_inicio_Longa Distância\n        <li>Administração Rede<BR>Longa Distância\n        <div class=\"sub-menu-1\">\n            <ul>\n        ARLD00000_inicio_Longa Distância -->    \n\n\n                <!-- ARLD00100_inicio_mapavisaogeralportal   \n                <li class=\"hover-me\"><a href=\"d/MapaVisaoGeralPortalMODELO/mapavisaogeralportalmodelo?orgId=1&refresh=5m&var-uf=MG\">Gerência Rede</a></li>\n                ARLD00100_fim_mapavisaogeralportal -->\n                \n                <!-- ARLD00200_inicio_topologiawanportal\n                <li class=\"hover-me\"><a href=\"d/TopologiaWANPortalMODELO/topologiawanportalmodelo?orgId=1&var-uf=RJ\">Topologia</a></li>\n                ARLD00200_fim_topologiawanportal -->\n                \n                <!-- ARLD00300_inicio_informacoescircuitosroteadores\n                <li class=\"hover-me\">Informações Circuitos e Roteadores\n                    <div class=\"sub-menu-2\">\n                        <ul>\n\t\t\t                <li class=\"hover-me\"><a href=\"d/InformacoesCircuitosRoteadoresMODELO/informacoescircuitosroteadoresmodelo?orgId=1&var-uf=MG&var-link=d/MenuPortalMODELO/menuportalmodelo?orgId=1\">Diário</a></li>\n\t\t\t                <li class=\"hover-me\"><a href=\"d/IndicadoresDesempenhoWANNacionalMODELO/indicadoresdesempenhowannacionalmodelo?orgId=1\">Mensal</a></li>\n                        </ul>                \n                    </div>\n                </li>\n\n                ARLD00300_fim_informacoescircuitosroteadores -->\n                \n                <!-- ARLD00400_inicio_ocupacaobandatrimestral\n                <li class=\"hover-me\"><a href=\"d/OcupacaoBandaTrimestralMODELO/ocupacaobandatrimestralmodelo?orgId=1\">Alta Utilização Persistente</a></li>\n                ARLD00400_fim_ocupacaobandatrimestral -->\n\n    <!-- ARLD00000_fim_Longa Distância\n            </ul>\n        </div>\n    </li>\n    ARLD00000_fim_Longa Distância -->\n\n<!-- ################################################################################################################## -->\n    <!-- ARL00000_inicio_Rede Local\n    <li>Administração<BR>Rede Local\n        <div class=\"sub-menu-1\">\n            <ul>\n    ARL00000_inicio_Rede Local -->   \n             \n                <!-- ARL00100_inicio_topologialanportal            \n                <li class=\"hover-me\"><a href=\"d/TopologiaLANPortalMODELO/topologialanportalmodelo?orgId=1&var-uf=RJ\">Topologia</a></li>\n                ARL00100_fim_topologialanportal-->\n                \n                <!-- ARL00200_inicio_gerenciawifiportal\n                <li class=\"hover-me\"><a href=\"d/GerenciaWIFIPortalMODELO/gerenciawifiportalmodelo?orgId=1&var-uf=RJ\">Wifi</a></li>\n                ARL00200_fim_gerenciawifiportal -->\n\n    <!-- ARL00000_fim_Rede Local\n            </ul>\n        </div>\n    </li>\n    ARL00000_fim_Rede Local -->\n  \n<!-- ################################################################################################################## -->  \n    \n    <!-- INF00000_inicio_Infovia\n    <li>Infovia\n        <div class=\"sub-menu-1\">\n            <ul>\n         INF00000_inicio_Infovia -->        \n            \n                <!-- INF00100_inicio_disponibilidadeinfovia\n                <li class=\"hover-me\"><a href=\"d/DisponibilidadeInfoviaMODELO/disponibilidadeinfoviamodelo?orgId=1\">Monitoração</a></li>\n                INF00100_fim_disponibilidadeinfovia -->\n    \n    <!-- INF00000_fim_Infovia            \n            </ul>\n        </div>\n    </li>\n         INF00000_fim_Infovia -->\n    \n<!-- ################################################################################################################## -->\n\n    <!-- ING00000_inicio_InformaçõesGerenciais\t\n    <li>Informações<BR>Gerenciais\n        <div class=\"sub-menu-1\">\n            <ul>\n         ING00000_inicio_InformaçõesGerenciais -->\n\n\t\t<!-- ING00100 _inicio_Ambiente     \n                <li class=\"hover-me\">Ambiente\n                    <div class=\"sub-menu-2\">\n                        <ul>\n                        \n\t\t    ING00100_inicio_Ambiente -->\n\t\t    \n\t\t                    <!-- ING00106_inicio_Certificado Digital Planilha\n\t\t        <li class=\"hover-me\"><a href=\"d/CertificadoDigitalPlanilhaXLSMODELO/certificadodigitalplanilhaxlsmodelo?orgId=1\">Certificado Digital<BR>Planilha</a></li>\t\n\t\t                    ING00106_inicio_Certificado Digital Planilha -->\n\t\t    \n\t\t    \n\t\t\t                <!-- ING00101_inicio_Datacenter\n\t\t\t    <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=DATACENTER\">Datacenter</a></li>\t\n\t\t\t                ING00101_fim_Datacenter -->\n\t\t\t                \n\t\t\t                <!-- ING00102_inicio_INFOVIA\t\n                            <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=INFOVIA\">Infovia</a></li>\n\t\t\t               ING00102_fim_INFOVIA -->\n\t\t\t                \n\t\t\t                <!-- ING00103_inicio_ Juridiscionante\n                            <li class=\"hover-me\"><a href=\"d/RelatorioPDFLANMODELOJURIS/relatoriopdflanmodelojuris?orgId=1&var-servico=LAN&var-prefixo=Juridiscionante\">Lan</a></li>\n                                        ING00103_fim_Juridiscionante-->\n\t\t\t                \n\t\t\t                <!-- ING00104_inicio_Lan\n                            <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=LAN\">Lan</a></li>\n                                       ING00104_fim_Lan -->                            \n\t\t\t                \n\t\t\t                <!-- ING00105_inicio_Wan\n\t\t\t                <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=WAN\">Wan</a></li>\n\t\t\t                ING00105_fim_Wan -->\n\n\t\t  <!-- ING00100_fim_Ambiente\n                        </ul>\n                    </div>\n                </li>\n\t\t  ING00100_fim_Ambiente -->\n\n\n                <!-- ING00300_inicio_Documentos\n                <li class=\"hover-me\">Documentos\n                    <div class=\"sub-menu-2\">\n                        <ul>\n                ING00300_inicio_ Documentos-->\n                            \n                            <!-- ING00300_inicio_Informes    \n                            <li class=\"hover-me\"><a href=\"d/InformativoPDFMODELO/informativopdfmodelo?orgId=1&var-servico=INFORME\">Informativo</a></li>\n                            ING00300_fim_Informes-->\n\t\t\t                <!-- ING00301_inicio_Manuais\n                            <li class=\"hover-me\"><a href=\"d/DocumentosPDFMODELO/documentospdfmodelo?orgId=1&var-servico=MANUAL\">Manuais</a></li>\n\t\t\t                ING00301_fim_Manuais-->\n\t\t     \t            <!-- ING00302_inicio_odelos_Tecnológicos\t\n                            <li class=\"hover-me\"><a href=\"d/DocumentosPDFMODELO/documentospdfmodelo?orgId=1&var-servico=MODEL\">Modelos Tecnológicos</a></li>\n\t\t\t                ING00302_fim_Modelos_Tecnológicos-->\n\n\t\t        <!-- ING00300_fim_Documentos\n                        </ul>\n                    </div>\n                </li>\n                ING00300_fim_Documentos -->\n\n\t\t        <!-- ING00400_inicio_Planta Instalada               \n                <li class=\"hover-me\"><a href=\"d/PlantaInstaladaMODELO/planta-instalada-modelo?orgId=1\">Planta Instalada</a></li>\n\t\t        ING00400_fim_Planta Instalada-->                \n\n\t\t        <!-- ING00500_inicio_Segurança\n                <li class=\"hover-me\">Segurança\n                    <div class=\"sub-menu-2\">\n                        <ul>\n\t\t        ING00500_inicio_Segurança -->\n\t\t\t                <!-- ING00501_inicio_ANTIDDOS\n                            <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=ANTIDDOS\">AntiDDOS</a></li>\n\t\t\t                ING00501_fim_ANTIDDOS -->\n\t\t\t                <!-- ING00502_inicio_FIREWALL\n                            <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=FIREWALL\">FIREWALL</a></li>\n\t\t\t                ING00502_fim_ FIREWALL-->\n\t\t\t                <!-- ING00503_inicio_IPS\n                            <li class=\"hover-me\"><a href=\"d/RelatorioPDFMODELO/relatoriopdfmodelo?orgId=1&var-servico=IPS\">IPS</a></li>\n\t\t\t                ING00503_fim_IPS-->\n\n\t\t        <!-- ING00500_fim_Segurança\n                        </ul>\n                    </div>\n                </li>\n\t\t        ING00500_fim_Segurança-->\n\n    <!-- ING00000\t\t                \n            </ul>\n        </div>\n    </li>\n    ING00000 -->\n\n<!-- ################################################################################################################## -->\n\n    <!-- MDP00000_inicio_Monitoração por Demanda\n    <li>Monitoração<BR>por Demanda\n        <div class=\"sub-menu-1\">\n            <ul>\n    MPD00000_inicio_Monitoração por Demanda -->        \n            \n                <!-- MPD00100_inicio_monitoracaodemanda\n                <li class=\"hover-me\"><a href=\"d/MonitoracaoDemandaMODELO/monitoracaodemandamodelo?orgId=1\">Painel 1</a></li>\n                MPD00100_fim_monitoracaodemanda -->\n    \n    <!-- MPD00000_fim_Monitoração por Demanda            \n            </ul>\n        </div>\n    </li>\n    MPD00000_fim_Monitoração por Demanda -->\n    \n    \n    <!-- <li><a href=\"#\">Contato</a></li> -->\n</ul>\n</div>",
+      "id": 6,
+      "js_code": "var user;\r\nctrl.data.forEach((item) => {\r\n\r\n    let valor = item.datapoints.map((d) => d[0]);\r\n\r\n    if(item.alias == \"USER\"  )    { user = (valor);     }\r\n    \r\n}); \r\n\r\n//\r\n//let html = '';\r\n\r\n//html += '\\n<div style=\"background-color: #611f2e; ' ;\r\n//html += 'border: 1px solid #f64971; ';\r\n//html += 'border-radius: 7px; ';\r\n//html += 'color: #f64971; ';\r\n//html += 'margin: 0.25rem; ';\r\n//html += 'padding: 1rem; ';\r\n//html += 'text-align: center\">Hello World</div>';\r\n\r\n//htmlnode.innerHTML = html;",
+      "js_init_code": "serprobots_trigger.destroy();",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "time_series",
+          "group": [],
+          "hide": true,
+          "metricColumn": "none",
+          "rawQuery": false,
+          "rawSql": "SELECT\n  data AS \"time\",\n  rx_erro\nFROM relatorio_indicadores_wan\nWHERE\n  $__timeFilter(data)\nORDER BY 1",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "transparent": true,
+      "type": "aidanmountford-html-panel"
+    }
+  ],
+  "refresh": "",
+  "revision": 1,
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true,
+    "refresh_intervals": [
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ]
+  },
+  "timezone": "",
+  "title": "menuportalmodelo",
+  "uid": "MenuPortalMODELO",
+  "version": 1,
+  "weekStart": ""
+}

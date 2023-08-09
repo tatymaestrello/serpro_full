@@ -1,0 +1,317 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_GDP_SUPCD",
+      "label": "GDP_SUPCD",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    },
+    {
+      "name": "DS_DB_2_ZBX_UNICO",
+      "label": "DB_2_ZBX_UNICO",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "postgres",
+      "pluginName": "PostgreSQL"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "aidanmountford-html-panel",
+      "name": "HTML",
+      "version": "0.0.2"
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.5.4"
+    },
+    {
+      "type": "datasource",
+      "id": "postgres",
+      "name": "PostgreSQL",
+      "version": "1.0.0"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Menu Portal Serviço",
+      "tooltip": "",
+      "type": "link",
+      "url": "d/MenuPortalMODELO/menuportalmodelo?orgId=1"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "aliasColors": {},
+      "css_data": "*{\r\n    box-sizing: border-box;\r\n    -webkit-box-sizing: border-box;\r\n    -moz-box-sizing: border-box;\r\n}\r\nbody{\r\n    font-family: Helvetica;\r\n    -webkit-font-smoothing: antialiased;\r\n    /*background: rgba( 71, 147, 227, 1);*/\r\n}\r\nh2{\r\n    text-align: center;\r\n    font-size: 18px;\r\n    text-transform: uppercase;\r\n    letter-spacing: 1px;\r\n    color: white;\r\n    padding: 30px 0;\r\n}\r\n\r\n/* Table Styles */\r\n\r\n.table-container {\r\n    display: inline-block;\r\n    width: auto;\r\n    height: 200px;                  /* Altura do container */\r\n    overflow: auto;\r\n\tfont-style: normal;\r\n\tfont-family: arial;verdana;\r\n\tfont-size: 13px;\r\n\tcolor: #6495ED;\r\n\tdisplay:block;\r\n\tborder-collapse: collapse;\r\n\tborder: 0px solid gray;\r\n//    overflow: scroll;\r\n}\r\n\r\n::-webkit-scrollbar{width:5px;border-left:1px solid #E6ECF8;}\r\n::-webkit-scrollbar-thumb{background-color:#0066ff;}\r\n\r\n\r\n.table-wrapper{\r\n    margin: 1px 7px 7px;\r\n    box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );\r\n}\r\n\r\n.fl-table {\r\n    border-radius: 5px;\r\n    font-size: 12px;\r\n    font-weight: normal;\r\n    border: none;\r\n    border-collapse: collapse;\r\n    width: 100%;\r\n    max-width: 100%;\r\n    white-space: nowrap;\r\n    background-color: white;\r\n}\r\n\r\n.fl-table td, .fl-table th {\r\n\r\n    text-align: center;\r\n    padding: 3px;\r\n}\r\n\r\n.fl-table td {\r\n    border-right: 1px solid #f8f8f8;\r\n    border-bottom: 1px solid #f8f8f8;\r\n    border-top: 1px solid #f8f8f8;\r\n    border-left: 1px solid #f8f8f8;    \r\n    font-size: 12px;\r\n}\r\n\r\n.fl-table thead th {\r\n    \r\n    border-right: 1px solid #f8f8f8;\r\n    border-bottom: 1px solid #f8f8f8;\r\n    border-top: 1px solid #f8f8f8;\r\n    border-left: 1px solid #f8f8f8;\r\n    position: sticky;                   /* fixa o cabecaolho */\r\n    top: 0;                             /* fixa o cabecaolho */\r\n    color: #ffffff;                     /*cor da font das colunas de cabecalho par head */\r\n    background: #0066ff;\r\n    font-size: 14px;\r\n    font-family: cursive; arial;\r\n    font-weight: normal;\r\n}\r\n\r\n\r\n.fl-table tr:nth-child(even) {\r\n    color: #000000;\r\n    background: #F8F8F8;    /*cor fundo das colunas impares de informacoes  */\r\n}\r\n\r\n.fl-table tr:nth-child(odd) {\r\n    color: #000099;\r\n    background: #e0e0e0;    /*cor fundo das colunas pares de informacoes  */\r\n}\r\n\r\n/* Responsive */\r\n\r\n@media (max-width: 767px) {\r\n    .fl-table {\r\n        display: block;\r\n        width: 100%;\r\n    }\r\n    .table-wrapper:before{\r\n        content: \"Scroll horizontally >\";\r\n        display: block;\r\n        text-align: right;\r\n        font-size: 11px;\r\n        color: white;\r\n        padding: 0 0 10px;\r\n    }\r\n    .fl-table thead, .fl-table tbody, .fl-table thead th {\r\n        display: block;\r\n    }\r\n    .fl-table thead th:last-child{\r\n        border-bottom: none;\r\n    }\r\n    .fl-table thead {\r\n        float: left;\r\n    }\r\n    .fl-table tbody {\r\n        width: auto;\r\n        position: relative;\r\n        overflow-x: auto;\r\n    }\r\n    .fl-table td, .fl-table th {\r\n        padding: 20px .625em .625em .625em;\r\n        height: 60px;\r\n        vertical-align: middle;\r\n        box-sizing: border-box;\r\n        overflow-x: hidden;\r\n        overflow-y: auto;\r\n        width: 120px;\r\n        font-size: 13px;\r\n        text-overflow: ellipsis;\r\n    }\r\n    .fl-table thead th {\r\n        text-align: left;\r\n        border-bottom: 1px solid #f7f7f9;\r\n    }\r\n    .fl-table tbody tr {\r\n        display: table-cell;\r\n    }\r\n    .fl-table tbody tr:nth-child(odd) {\r\n        background: none;\r\n    }\r\n    .fl-table tr:nth-child(even) {\r\n        background: transparent;\r\n    }\r\n    .fl-table tr td:nth-child(odd) {\r\n        background: #F8F8F8;\r\n        border-right: 1px solid #E6E4E4;\r\n    }\r\n    .fl-table tr td:nth-child(even) {\r\n        border-right: 1px solid #E6E4E4;\r\n    }\r\n    .fl-table tbody td {\r\n        display: block;\r\n        text-align: center;\r\n    }\r\n}\r\n\r\n",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "description": "",
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "handleMetric": {},
+      "html_data": "<div class=\"table-container\">\r\n<div class=\"table-wrapper\">\r\n    <table class=\"fl-table\">\r\n        <thead>\r\n        <tr>\r\n            <th>Header 1</th>\r\n            <th>Header 2</th>\r\n            <th>Header 3</th>\r\n            <th>Header 4</th>\r\n            <th>Header 5</th>\r\n        </tr>\r\n        </thead>\r\n        <tbody>\r\n        <tr>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n        </tr>\r\n        <tr>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n        </tr>\r\n\r\n        <tbody>\r\n    </table>\r\n</div>\r\n</div>\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+      "id": 5,
+      "js_code": "// jshint strict: false\r\n\r\n/*\r\n+-------------------------------------------------------+\r\n| Programa de atualizacao da informacoes de desempenho  |\r\n| rodando provisoriamente na maquina 81                 |\r\n| /srv/www/cgi-bin/Utilitarios/IndicadoresWanGtic/      |\r\n| atualIndicadoresWanGtic.sh                            |\r\n+-------------------------------------------------------+\r\n*/\r\n\r\n\r\nvar htmlheader = 0;\r\n\r\n\r\n\r\n/* Armazenando dados das Consultas */\r\n\r\n\r\n  \r\n/* Fim do armazenamento das Consultas */\r\n\r\n\r\nvar html = ' ' ;\r\n\r\nhtml += '\t<!-- Inicio do HTML -->';\r\nhtml += '\t<!DOCTYPE html>';\r\nhtml += '\t<head>';\r\nhtml += '\t<meta http-equiv=Content-Type content=text/html;charset=iso-8859-1>';\r\nhtml += '\t<style>';\r\n\r\n\r\nhtml += '*{';\r\nhtml += '    box-sizing: border-box;';\r\nhtml += '    -webkit-box-sizing: border-box;';\r\nhtml += '    -moz-box-sizing: border-box;';\r\nhtml += '}';\r\nhtml += 'body{';\r\nhtml += '    font-family: Helvetica;';\r\nhtml += '    -webkit-font-smoothing: antialiased;';\r\n    /*background: rgba( 71, 147, 227, 1);*/\r\nhtml += '}';\r\nhtml += 'h2{';\r\nhtml += '    text-align: center;';\r\nhtml += '    font-size: 18px;';\r\nhtml += '    text-transform: uppercase;';\r\nhtml += '    letter-spacing: 1px;';\r\nhtml += '    color: white;';\r\nhtml += '    padding: 30px 0;';\r\nhtml += '}';\r\n\r\n/* Table Styles */\r\n\r\nhtml += '.table-container {';\r\nhtml += '   display: inline-block;';\r\nhtml += '   width: auto;';\r\nhtml += '   height: 500px;';                  /* Altura do container */\r\nhtml += '   overflow: auto;';\r\nhtml += '\tfont-style: normal;';\r\nhtml += '\tfont-family: arial;verdana;';\r\nhtml += '\tfont-size: 13px;';\r\nhtml += '\tcolor: #6495ED;';\r\nhtml += '\tdisplay:block;';\r\nhtml += '\tborder-collapse: collapse;';\r\nhtml += '\tborder: 0px solid gray;';\r\n//    overflow: scroll;\r\nhtml += '}';\r\n\r\nhtml += '::-webkit-scrollbar{width:5px;border-left:1px solid #E6ECF8;}';\r\nhtml += '::-webkit-scrollbar-thumb{background-color:#AAAAAA;}';\r\n\r\n\r\nhtml += '.table-wrapper{';\r\nhtml += '    margin: 0px 10px 10px;';\r\nhtml += '    box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );';\r\nhtml += '}';\r\n\r\nhtml += '.fl-table {';\r\nhtml += '    border-radius: 5px;';\r\nhtml += '    font-size: 12px;';\r\nhtml += '    font-weight: normal;';\r\nhtml += '    border: none;';\r\nhtml += '    border-collapse: collapse;';\r\nhtml += '    width: 100%;';\r\nhtml += '    max-width: 100%;';\r\nhtml += '    white-space: wrap;';                   /* permite quebra de linha na coluna */\r\nhtml += '    background-color: white;';\r\nhtml += '}';\r\n\r\nhtml += '.fl-table td, .fl-table th {';\r\nhtml += '    text-align: center;';\r\nhtml += '    padding: 3px;';\r\nhtml += '}';\r\n\r\nhtml += '.fl-table td {';\r\nhtml += '    border-right: 1px solid #f8f8f8;';\r\nhtml += '    border-bottom: 1px solid #f8f8f8;';\r\nhtml += '    border-top: 1px solid #f8f8f8;';\r\nhtml += '    border-left: 1px solid #f8f8f8;';\r\nhtml += '    font-size: 13px;';\r\nhtml += '}';\r\n\r\nhtml += 'thead {';\r\nhtml += '    position: sticky;';\r\nhtml += '    top: 0;';\r\nhtml += '}';\r\n\r\n\r\nhtml += '.fl-table thead th {';\r\n    \r\nhtml += '    border-right: 2px solid #f8f8f8;';\r\nhtml += '    border-bottom: 2px solid #f8f8f8;';\r\nhtml += '    border-top: 2px solid #f8f8f8;';\r\nhtml += '    border-left: 2px solid #f8f8f8;';\r\nhtml += '    position: sticky;';                   /* fixa o cabecaolho */\r\nhtml += '    top: 0;';                             /* fixa o cabecaolho */\r\nhtml += '    color: #ffffff;';                     /*cor da font das colunas de cabecalho par head */\r\nhtml += '    background: #222222;';\r\nhtml += '    font-size: 14px;';\r\nhtml += '    font-family: cursive; arial;';\r\nhtml += '    font-weight: normal;';\r\n//html += '    min-width: 95px;';\r\nhtml += '}';\r\n\r\n\r\nhtml += '.fl-table tr:nth-child(even) {';\r\nhtml += '    color: #000000;';\r\nhtml += '    background: #AAAAAA;';    /*cor fundo das colunas impares de informacoes  */\r\nhtml += '}';\r\n\r\nhtml += '.fl-table tr:nth-child(odd) {';\r\nhtml += '    color: #000000;';\r\nhtml += '    background: #BBBBBB;';    /*cor fundo das colunas pares de informacoes  */\r\nhtml += '}';\r\n\r\nhtml += '\t</style>';\r\n\r\nhtml += '\t<title>Agentes Zabbix</title>';\r\nhtml += '\t</head>';\r\n\r\nhtml += '\t<body  vlink=#000000 alink=#000000 link=#000000 bgcolor=\"#000000\">';\r\nhtml += '   <div class=\"table-container\">';\r\n    html += '   <div class=\"table-wrapper\">';\r\n    \r\n    html += '   <table class=\"fl-table\">';\r\n\r\n  \r\n    /* CONTEUDO DAS COLUNAS */\r\n    /* PROGRAMACAO  */\r\n\r\nvar pontos = 0; \r\nctrl.data.forEach((item) => {\r\n    let valor = item.datapoints.map((d) => d[0]); \r\n    \r\n    pontos = valor.length;\r\n    \r\n     \r\n    for (var i=0; i < valor.length; i++){ \r\n\r\n        let dados = valor[i].split('|');\r\n        let local = dados[0].split('::')[0];\r\n        let iface = dados[0].split('::')[1];\r\n        \r\n        if (htmlheader === 0){\r\n        \r\n            let mes1;  let mes2;  let mes3; \r\n        \r\n            mes1 = dados[3].split('-')[1] + '/' + dados[3].split('-')[0];\r\n            mes2 = dados[6].split('-')[1] + '/' + dados[6].split('-')[0];\r\n            mes3 = dados[9].split('-')[1] + '/' + dados[9].split('-')[0]; \r\n\r\n            /* CABECALHO DAS COLUNAS */\r\n            html += '   <thead>';\r\n            html += '   <tr>';\r\n            html += '       <th rowspan=2>Localidade</th>';\r\n            html += '       <th rowspan=2>Interface</th>';\r\n            html += '       <th rowspan=2>Velocidade<br>Kbps</th>';\r\n            html += '       <th rowspan=2>Tipo</th>';\r\n            html += '       <th colspan=2>' + mes1 + '</th>';\r\n            html += '       <th colspan=2>' + mes2 + '</th>';\r\n            html += '       <th colspan=2>' + mes3 + '</th>';\r\n            html += '       <th rowspan=2>Média Trimestral<br>Entrada</th>';\r\n            html += '       <th rowspan=2>Média Trimestral<br>Saída</th>';\r\n            html += '   </tr>';\r\n            html += '   <tr>';\r\n            html += '       <th >% IN</th>';\r\n            html += '       <th >% OUT</th>';\r\n            html += '       <th >% IN</th>';\r\n            html += '       <th >% OUT</th>';\r\n            html += '       <th >% IN</th>';\r\n            html += '       <th >% OUT</th>';\r\n            html += '   </tr>';\r\n            html += '   </thead>';\r\n    \r\n            htmlheader = 1;\r\n    \r\n        }\r\n        \r\n        html += '   <tr>';\r\n        \r\n        html += '   <td>'+local+'</td>';\r\n        html += '   <td>'+iface+'</td>';\r\n        html += '   <td>'+dados[1]+'</td>';\r\n        html += '   <td>'+dados[2]+'</td>';\r\n        html += '   <td>'+dados[4]+'</td>';\r\n        html += '   <td>'+dados[5]+'</td>';\r\n        html += '   <td>'+dados[7]+'</td>';\r\n        html += '   <td>'+dados[8]+'</td>';\r\n        html += '   <td>'+dados[10]+'</td>';\r\n        html += '   <td>'+dados[11]+'</td>';\r\n        \r\n        let utl = parseFloat(dados[12]);\r\n        \r\n        if (utl > 70) {\r\n            html += '   <td bgcolor=red>'+dados[12]+'</td>';\r\n        } else if ((utl > 60) && (utl <= 70)) {\r\n            html += '   <td bgcolor=#FF780A>'+dados[12]+'</td>';\r\n        } else if (utl > 55) {\r\n            html += '   <td bgcolor=#F2CC0C>'+dados[12]+'</td>';        \r\n        } else {\r\n            html += '   <td>'+dados[12]+'</td>';    \r\n        }    \r\n         \r\n        utl = parseFloat(dados[13]);\r\n        \r\n        if (utl > 70) {\r\n            html += '   <td bgcolor=red>'+dados[13]+'</td>';\r\n        } else if ((utl > 60) && (utl <= 70)) {\r\n            html += '   <td bgcolor=#FF780A>'+dados[13]+'</td>';\r\n        } else if (utl > 55) {\r\n            html += '   <td bgcolor=#F2CC0C>'+dados[13]+'</td>';        \r\n        } else {\r\n            html += '   <td>'+dados[13]+'</td>';    \r\n        }        \r\n\r\n\r\n        //html += '   <td>'+dados[13]+'</td>';\r\n\r\n        html += '   </tr>';\r\n     \r\n    }  \r\n\r\n\r\n\r\n});\r\n\r\n    html += '   <tbody>';\r\n\r\n\r\n/*\r\n    for (let key in e08) {\r\n \r\n        html += '   <tr>';\r\n        html += '       <td>'+key+'</td>';            \r\n        html += '       <td><font color='+color[fe08[key]]+'>'+e08[key]+'% </font>(08:00)<br><font color='+color[fe12[key]]+'>'+e12[key]+'% </font>(12:00)<br><font color='+color[fe14[key]]+'>'+e14[key]+'% </font>(14:00)</td>';\r\n        html += '       <td><font color='+color[fs08[key]]+'>'+s08[key]+'% </font>(08:00)<br><font color='+color[fs12[key]]+'>'+s12[key]+'% </font>(12:00)<br><font color='+color[fs14[key]]+'>'+s14[key]+'% </font>(14:00)</td>';\r\n        html += '       <td><font color='+color[ferrin[key]]+'>'+errin[key]+'</font></td>';\r\n        html += '       <td><font color='+color[ferrout[key]]+'>'+errout[key]+'</font></td>';\r\n        html += '       <td><font color='+color[fdesin[key]]+'>'+desin[key]+'</font></td>';\r\n        html += '       <td><font color='+color[fdesout[key]]+'>'+desout[key]+'</font></td>';\r\n        //html += '       <td><font color='+color[fpro[key]]+'>'+pro[key]+'</font></td>';\r\n        html += '       <td><font color=\"#000000\">'+pro[key]+'</font></td>';\r\n        //html += '       <td><font color='+color[fcpu[key]]+'>'+cpu[key]+'</font></td>';\r\n        html += '       <td><font color=\"#000000\">'+cpu[key]+'</font></td>';\r\n        //html += '       <td><font color='+color[fmem[key]]+'>'+mem[key]+'</font></td>';\r\n        html += '       <td><font color=\"#000000\">'+mem[key]+'</font></td>';\r\n        html += '   </tr>';\r\n\r\n        \r\n    }\r\n    \r\n*/\r\n    /* FIM PROGRAMACAO  */\r\n    /* FIM CONTEUDO DAS COLUNAS */\r\n\r\n\r\n    html += '   <tbody>';\r\n\r\n\r\n    html += '   </table>';\r\n\r\n    html += '</div>';\r\n    \r\n    \r\n    if (pontos === 0) {\r\n        html += '\t<body  vlink=#000000 alink=#000000 link=#000000 bgcolor=\"#000000\">';\r\n        html += '   <div class=\"table-container\">';\r\n        html += '   <div class=\"table-wrapper\">';\r\n    \r\n        html += '   <table class=\"fl-table\">';\r\n\r\n        html += '   <tr><td>Não há pontos com média de utilização elevada nos últimos 3 meses</td></tr>';\r\n        html += '   </table>';\r\n\r\n        html += '</div>';\r\n    }\r\n\r\n    \r\nhtml += '</div>';\r\n\r\n//html += '<br>';\r\nhtml += '</body>';\r\nhtml += '</html>';\r\n\r\n\r\nhtmlnode.innerHTML = html;\r\n\r\n\r\n\r\n\r\n/* \r\nvar html = ' ' ;\r\nhtml += '\t<!-- Inicio do HTML -->';\r\nhtml += '\t<!DOCTYPE html>';\r\nhtml += '\t<head>';\r\nhtml += '\t<meta http-equiv=Content-Type content=text/html;charset=iso-8859-1>';\r\nhtml += '\t<style>';\r\nhtml += '\ttable {';\r\nhtml += '\t\ttable-layout: fixed;';\r\nhtml += '\t\twidth: 100%;';\r\n\r\nhtml += '\t}';\r\n\r\nhtml += '\t.table-container {';\r\nhtml += '\t    display: inline-block;';\r\n//html += '\t    width: 950px;';\r\nhtml += '\t    height: 200px;';\r\nhtml += '\t    overflow: auto;';\r\nhtml += '\t\tfont-style: normal;';\r\nhtml += '\t\tfont-family: arial;verdana;';\r\nhtml += '\t\tfont-size: 12px;';\r\nhtml += '\t\tcolor: #6495ED;';\r\nhtml += '\t\tdisplay:block;';\r\nhtml += '       border-collapse: collapse;';\r\nhtml += '\t\tborder: 2px solid gray;';\r\n//html += '\t    overflow: scroll;';\r\nhtml += '\t}';\r\n\r\nhtml += '\ttd,th {';\r\n//html += '\t\ttable-layout: auto;';\r\n//html += '\t\twidth: 100%;';\r\n//html += '\t\tfont-style: normal;';\r\n//html += '\t\tfont-family: arial;verdana;';\r\n//html += '\t\tfont-size: 12px;';\r\n//html += '\t\tcolor: #6495ED;';\r\n//html += '\t\tdisplay:block;';\r\n//html += '       border-collapse: collapse;';\r\nhtml += '\t\tborder: 1px solid gray;';\r\n//html += '\t    overflow: scroll;';\r\nhtml += '\t}';\r\n\r\n\r\n\r\n//html += '\ttable th,';\r\n//html += '\ttable td {';\r\n//html += '\t\tborder: 1px solid white;';\r\n//html += '\t    white-space: nowrap;';\r\n//html += '\t    padding: 10px 20px';\r\n//html += '\t    font-family: Arial;';\r\n//html += '\t}';\r\n\r\n//html += '\ttable tr th:first-child,';\r\n//html += '\ttable td:first-child {';\r\n//html += '\t    position: sticky;';\r\n//html += '\t    color: #6495ED;';\r\n//html += '\t    width: 100px;';\r\n//html += '\t    left: 1;';\r\n//html += '\t    z-index: 10;';\r\n//html += '\t    background: #fff;'\r\n//html += '\t}';\r\n\r\n//html += '\ttable tr th:first-child {';\r\n//html += '\t    z-index: 11;';\r\n//html += '\t}';\r\n\r\n//html += '   th tr {';\r\n//html += '\t    border: 1px solid gray;';\r\n//html += '\t    color: #6495ED;';\r\n//html += '\t    z-index: 9;';\r\n//html += '\t    background: #000;';\r\n//html += '\t}';\r\n\r\nhtml += '\t</style>';\r\n\r\nhtml += '\t<title>GDP_MPLS</title>';\r\nhtml += '\t</head>';\r\nhtml += '\t<body  vlink=#0000BC alink=#0000BC link=#0000BC bgcolor=\"#aa3aaa\">';\r\nhtml += '\t<!-- #-------------------------------------------------------------------------# -->';\r\nhtml += '\t<!-- # INICIO DA TABELA EXTERNA PARA ALINHAMENTO NO I.E.                       # -->';\r\nhtml += '\t<!-- #-------------------------------------------------------------------------# -->';\r\n\r\n//html += '<div align=\"center\"><font size=\"4\" color=\"white\" width=\"auto\">Indicadores de Desempenho </font> </div>';\r\n\r\nhtml += '<div class=\"table-container\">';\r\n\r\nhtml += '<table>';\r\n//html += '  <tbody>'; \r\n//html += '<tr  style=\"text-align: center;\"> <td colspan=16\" > <font size=\"5\"; color=\"white\";> Indicadores de Desempenho </font></td></tr>'\r\nhtml += '<tr><th>Data</th><th>Utilização<br>Entrada</th><th>Utilização<br>Saída</th><th>Erro<br>Entrada</th><th>Erro<br>Saída</th><th>Descarte<br>Entrada</th><th>Descarte<br>Saída</th><th>Propagação</th><th>CPU</th><th>Memória</th></tr>';\r\n //width=\"80px\"\r\n//########################################### ROTINA DE CARGA DE VARIÁVEIS ##################################\r\nctrl.data.forEach((item) => {\r\n     valor = item.datapoints.map((d) => d[0]);\r\n     //alert(valor)\r\n});  \r\n//-------------------------- FIM DA CARGA DE VARIÁVEIS ------------------------------------------\r\n\r\n//############################## CRIAÇÃO DAS LINHAS DE NOTICIAS  ##################################\r\n\r\n\r\nfor (var i=0; i < valor.length; i++){ \r\n        \r\n       cpm  = valor[i].split(';');\r\n       trab = cpm[14].split(',');\r\n       \r\n        for (var r=0; r < trab.length; r++){\r\n            let kk= r + 1;\r\n            if(trab[r] == 1){ color[kk] = \"#F9364D\"; } else{ color[kk] = \"white\"; }\r\n             \r\n            //alert(r  + '= '+ trab[r]  + '= '+ kk  + '= '+ color[kk] ); \r\n       }\r\n      \r\n      var tcolor = \"#D2691E\"; \r\n\r\n//alert('Pos='+ i + '  data=' + cpm[0] +'  cpu='+ cpm[1]+'  mem='+cpm[2]  +'  propagacao='+ cpm[3]+'  erro_e='+ cpm[4]+'erro_s='+ cpm[5]+'descarte_e='+ cpm[6]+'descarte_s='+ cpm[7]+'e08='+ cpm[8]+'s08='+ cpm[9]+'e12='+ cpm[10]+'s12='+ cpm[11]+'e14='+ cpm[12]+'s14='+ cpm[13]);       \r\n    html += '<tr><td align=\"center\"><font color=\"#6495ED\" > <b> ';\r\n    html += cpm[0];  \r\n    html += '</b> </font></td> <td align=\"center\"> <font color=' + color[4] + ' ><b>';\r\n    html += cpm[4];\r\n    html += '</b>%</font> <font size=\"1\" color=\"#cccccc\"> (08:00)</font> <br> <font color=' + color[6] + ' ><b> ' ;\r\n    html += cpm[6];\r\n    html += '</b>% </font> <font size=\"1\" font size=\"1\" color=\"#cccccc\">(12:00)</font> <br> <font color=' + color[8] + ' ><b>';\r\n    html += cpm[8];\r\n    html += '</b>%</font>  <font size=\"1\" font size=\"1\" color=\"#cccccc\">(14:00)</font> </td> <td align=\"center\"> <font color=' + color[5] + ' ><b>';\r\n    html += cpm[5];\r\n    html += '</b>% </font> <font size=\"1\" font size=\"1\" color=\"#cccccc\">(08:00)</font>  <br><font color=' + color[7] + ' > <b>' ;\r\n    html += cpm[7];\r\n    html += '</b>% </font> <font size=\"1\" font size=\"1\" color=\"#cccccc\">(12:00)</font>  <br> <font color=' + color[9] + ' ><b>' ;\r\n    html += cpm[9];\r\n    html += '</b>%</font>  <font size=\"1\" font size=\"1\" color=\"#cccccc\">(14:00)</font> </td> <td align=\"center\"><font color=' + color[10] + ' > <b>';\r\n    html += cpm[10];\r\n    html += '</b>%</font></td> <td align=\"center\"> <font color=' + color[11] + ' ><b>';\r\n    html += cpm[11];\r\n    html += '</b>%</font></td> <td align=\"center\"> <font color=' + color[12] + ' ><b>';\r\n    html += cpm[12];\r\n    html += '</b>% </font></font></td> <td align=\"center\"><font color=' + color[13] + ' > <b>';\r\n    html += cpm[13];\r\n    html += '</b>% </font></td> <td align=\"center\"> <font color=' + color[3] + ' ><b>';\r\n    html += cpm[3];\r\n    html += '</b>ms</font> </td> <td align=\"center\"> <font color=' + color[1] + ' ><b>';\r\n    html += cpm[1];\r\n    html += '</b>% </font></td> <td align=\"center\"> <font color=' + color[2] + ' ><b>';\r\n    html += cpm[2];\r\n    html += '</b>% </font></td></tr>';\r\n       //html += '</font></td></tr>'\r\n\r\n}\r\n//-------------------------- FIM DA CRIAÇÃO ------------------------------------------\r\n//html += '</tbody>';\r\nhtml += '</table>';\r\n\r\nhtml += '</div>';\r\n\r\n//html += '<br>';\r\nhtml += '</body>';\r\nhtml += '</html>';\r\n\r\nhtmlnode.innerHTML = html;\r\n\r\n*/",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "pluginVersion": "8.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select concat(\r\n       ccto::text,'|'\r\n     , kbps::text,'|'\r\n     , tipo::text,'|'\r\n     , m1::text,'|'\r\n     , em1 ::text,'|'\r\n     , sm1::text,'|'\r\n     , m2::text,'|'\r\n     , em2::text,'|'\r\n     , sm2::text,'|'\r\n     , m3::text,'|'\r\n     , em3::text,'|'\r\n     , sm3::text,'|'\r\n     , mte::text,'|'\r\n     , mts::text), now() as time\r\n \r\n\r\nfrom (\r\n\r\n \r\n\r\nwith t as (\r\nselect distinct\r\n       ponto || '::' || interface as ccto\r\n     , kbps\r\n     , tipo\r\n     , mes\r\n     , (mes || '-01')::timestamp as mt\r\n     , mme::numeric(5,2) as mme\r\n     , mms::numeric(5,2) as mms\r\nfrom (\r\n  select distinct\r\n         p.nome as ponto\r\n       , r.kbps\r\n       , r.tipo\r\n       , interface, mes\r\n       , avg(mde) over (partition by t.hostname, interface, mes) as mme\r\n       , avg(mds) over (partition by t.hostname, interface, mes) as mms\r\n  from (\r\n    select hostname, interface, mes, data\r\n         , ((e08+e12+e14)/3)::numeric(5,2) as mde\r\n         , ((s08+s12+s14)/3)::numeric(5,2) as mds\r\n    from (\r\n      select upper(hostname) as hostname, interface, left(data::text,7) as mes, data\r\n           , extract(dow from data) as dow\r\n           , e08::float, e12::float, e14::float \r\n           , s08::float, s12::float, s14::float \r\n        from indicadores_desempenho_gtic \r\n       where cliente =  'MODELO'\r\n         --and data between '$inicio' and '$fim'\r\n         and data between (left((current_date - interval '3 months')::text,7) || '-01')::date and  ((left(current_date::text,7) || '-01')::date -Interval '1 day')::date \r\n       order by 1,2,3\r\n    ) t\r\n    where ((e08 > -1) or (e12 > -1) or (e14 > -1) or (s08 > -1) or (s12 > -1) or (s14 > -1))\r\n      and dow in (1,2,3,4,5)\r\n  ) t, ponto p, rede r\r\n  where (t.hostname,p.hostname,r.hostname) = (p.hostname,r.hostname,t.hostname)\r\n    and t.interface = r.iface\r\n  order by 1,2\r\n) t\r\n)\r\nselect distinct\r\n       t1.ccto\r\n     , t1.kbps\r\n     , t1.tipo\r\n     , t1.mes as m1\r\n     , t1.mme as em1 \r\n     , t1.mms as sm1\r\n     , t2.mes as m2\r\n     , t2.mme as em2\r\n     , t2.mms as sm2\r\n     , t3.mes as m3\r\n     , t3.mme as em3\r\n     , t3.mms as sm3\r\n     , ((t1.mme+t2.mme+t3.mme)/3)::numeric(5,2) as mte\r\n     , ((t1.mms+t2.mms+t3.mms)/3)::numeric(5,2) as mts\r\n  from t t1, t t2, t t3\r\nwhere (t1.ccto,t2.ccto,t3.ccto) = (t2.ccto,t3.ccto,t1.ccto)\r\n   and t1.mt < t2.mt\r\n   and t2.mt < t3.mt\r\norder by 1\r\n\r\n \r\n\r\n) t\r\nwhere mte > 55 or mts > 55",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "txbyte"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "recursoswan",
+          "timeColumn": "horario",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Alertas de localidades com alta utilização nos últimos 3 meses",
+      "transparent": true,
+      "type": "aidanmountford-html-panel"
+    },
+    {
+      "aliasColors": {},
+      "css_data": "*{\r\n    box-sizing: border-box;\r\n    -webkit-box-sizing: border-box;\r\n    -moz-box-sizing: border-box;\r\n}\r\nbody{\r\n    font-family: Helvetica;\r\n    -webkit-font-smoothing: antialiased;\r\n    /*background: rgba( 71, 147, 227, 1);*/\r\n}\r\nh2{\r\n    text-align: center;\r\n    font-size: 18px;\r\n    text-transform: uppercase;\r\n    letter-spacing: 1px;\r\n    color: white;\r\n    padding: 30px 0;\r\n}\r\n\r\n/* Table Styles */\r\n\r\n.table-container {\r\n    display: inline-block;\r\n    width: auto;\r\n    height: 200px;                  /* Altura do container */\r\n    overflow: auto;\r\n\tfont-style: normal;\r\n\tfont-family: arial;verdana;\r\n\tfont-size: 13px;\r\n\tcolor: #6495ED;\r\n\tdisplay:block;\r\n\tborder-collapse: collapse;\r\n\tborder: 0px solid gray;\r\n//    overflow: scroll;\r\n}\r\n\r\n::-webkit-scrollbar{width:5px;border-left:1px solid #E6ECF8;}\r\n::-webkit-scrollbar-thumb{background-color:#0066ff;}\r\n\r\n\r\n.table-wrapper{\r\n    margin: 1px 7px 7px;\r\n    box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );\r\n}\r\n\r\n.fl-table {\r\n    border-radius: 5px;\r\n    font-size: 12px;\r\n    font-weight: normal;\r\n    border: none;\r\n    border-collapse: collapse;\r\n    width: 100%;\r\n    max-width: 100%;\r\n    white-space: nowrap;\r\n    background-color: white;\r\n}\r\n\r\n.fl-table td, .fl-table th {\r\n\r\n    text-align: center;\r\n    padding: 3px;\r\n}\r\n\r\n.fl-table td {\r\n    border-right: 1px solid #f8f8f8;\r\n    border-bottom: 1px solid #f8f8f8;\r\n    border-top: 1px solid #f8f8f8;\r\n    border-left: 1px solid #f8f8f8;    \r\n    font-size: 12px;\r\n}\r\n\r\n.fl-table thead th {\r\n    \r\n    border-right: 1px solid #f8f8f8;\r\n    border-bottom: 1px solid #f8f8f8;\r\n    border-top: 1px solid #f8f8f8;\r\n    border-left: 1px solid #f8f8f8;\r\n    position: sticky;                   /* fixa o cabecaolho */\r\n    top: 0;                             /* fixa o cabecaolho */\r\n    color: #ffffff;                     /*cor da font das colunas de cabecalho par head */\r\n    background: #0066ff;\r\n    font-size: 14px;\r\n    font-family: cursive; arial;\r\n    font-weight: normal;\r\n}\r\n\r\n\r\n.fl-table tr:nth-child(even) {\r\n    color: #000000;\r\n    background: #F8F8F8;    /*cor fundo das colunas impares de informacoes  */\r\n}\r\n\r\n.fl-table tr:nth-child(odd) {\r\n    color: #000099;\r\n    background: #e0e0e0;    /*cor fundo das colunas pares de informacoes  */\r\n}\r\n\r\n/* Responsive */\r\n\r\n@media (max-width: 767px) {\r\n    .fl-table {\r\n        display: block;\r\n        width: 100%;\r\n    }\r\n    .table-wrapper:before{\r\n        content: \"Scroll horizontally >\";\r\n        display: block;\r\n        text-align: right;\r\n        font-size: 11px;\r\n        color: white;\r\n        padding: 0 0 10px;\r\n    }\r\n    .fl-table thead, .fl-table tbody, .fl-table thead th {\r\n        display: block;\r\n    }\r\n    .fl-table thead th:last-child{\r\n        border-bottom: none;\r\n    }\r\n    .fl-table thead {\r\n        float: left;\r\n    }\r\n    .fl-table tbody {\r\n        width: auto;\r\n        position: relative;\r\n        overflow-x: auto;\r\n    }\r\n    .fl-table td, .fl-table th {\r\n        padding: 20px .625em .625em .625em;\r\n        height: 60px;\r\n        vertical-align: middle;\r\n        box-sizing: border-box;\r\n        overflow-x: hidden;\r\n        overflow-y: auto;\r\n        width: 120px;\r\n        font-size: 13px;\r\n        text-overflow: ellipsis;\r\n    }\r\n    .fl-table thead th {\r\n        text-align: left;\r\n        border-bottom: 1px solid #f7f7f9;\r\n    }\r\n    .fl-table tbody tr {\r\n        display: table-cell;\r\n    }\r\n    .fl-table tbody tr:nth-child(odd) {\r\n        background: none;\r\n    }\r\n    .fl-table tr:nth-child(even) {\r\n        background: transparent;\r\n    }\r\n    .fl-table tr td:nth-child(odd) {\r\n        background: #F8F8F8;\r\n        border-right: 1px solid #E6E4E4;\r\n    }\r\n    .fl-table tr td:nth-child(even) {\r\n        border-right: 1px solid #E6E4E4;\r\n    }\r\n    .fl-table tbody td {\r\n        display: block;\r\n        text-align: center;\r\n    }\r\n}\r\n\r\n",
+      "datasource": {
+        "type": "postgres",
+        "uid": "${DS_GDP_SUPCD}"
+      },
+      "description": "",
+      "doInit": {},
+      "format": "short",
+      "gridPos": {
+        "h": 2,
+        "w": 9,
+        "x": 7,
+        "y": 14
+      },
+      "handleMetric": {},
+      "html_data": "<div class=\"table-container\">\r\n<div class=\"table-wrapper\">\r\n    <table class=\"fl-table\">\r\n        <thead>\r\n        <tr>\r\n            <th>Header 1</th>\r\n            <th>Header 2</th>\r\n            <th>Header 3</th>\r\n            <th>Header 4</th>\r\n            <th>Header 5</th>\r\n        </tr>\r\n        </thead>\r\n        <tbody>\r\n        <tr>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n            <td>Content 1</td>\r\n        </tr>\r\n        <tr>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n            <td>Content 2</td>\r\n        </tr>\r\n\r\n        <tbody>\r\n    </table>\r\n</div>\r\n</div>\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n",
+      "id": 4,
+      "js_code": "// jshint strict: false\r\n\r\n/*\r\n+-------------------------------------------------------+\r\n| Programa de atualizacao da informacoes de desempenho  |\r\n| rodando provisoriamente na maquina 81                 |\r\n| /srv/www/cgi-bin/Utilitarios/IndicadoresWanGtic/      |\r\n| atualIndicadoresWanGtic.sh                            |\r\n+-------------------------------------------------------+\r\n*/\r\n\r\n\r\nvar valor=[]; var cpm=[]; var color;   var trab; var falha = [];  var htmlheader = 0;\r\n\r\n\r\n\r\n/* Armazenando dados das Consultas */\r\n\r\n\r\n  \r\n/* Fim do armazenamento das Consultas */\r\n\r\n\r\nvar html = ' ' ;\r\n\r\nhtml += '\t<!-- Inicio do HTML -->';\r\nhtml += '\t<!DOCTYPE html>';\r\nhtml += '\t<head>';\r\nhtml += '\t<meta http-equiv=Content-Type content=text/html;charset=iso-8859-1>';\r\nhtml += '\t<style>';\r\n\r\n\r\nhtml += '*{';\r\nhtml += '    box-sizing: border-box;';\r\nhtml += '    -webkit-box-sizing: border-box;';\r\nhtml += '    -moz-box-sizing: border-box;';\r\nhtml += '}';\r\nhtml += 'body{';\r\nhtml += '    font-family: Helvetica;';\r\nhtml += '    -webkit-font-smoothing: antialiased;';\r\n    /*background: rgba( 71, 147, 227, 1);*/\r\nhtml += '}';\r\nhtml += 'h2{';\r\nhtml += '    text-align: center;';\r\nhtml += '    font-size: 18px;';\r\nhtml += '    text-transform: uppercase;';\r\nhtml += '    letter-spacing: 1px;';\r\nhtml += '    color: white;';\r\nhtml += '    padding: 30px 0;';\r\nhtml += '}';\r\n\r\n/* Table Styles */\r\n\r\nhtml += '.table-container {';\r\nhtml += '   display: inline-block;';\r\nhtml += '   width: auto;';\r\nhtml += '   height: 120px;';                  /* Altura do container */\r\nhtml += '   overflow: auto;';\r\nhtml += '\tfont-style: normal;';\r\nhtml += '\tfont-family: arial;verdana;';\r\nhtml += '\tfont-size: 13px;';\r\nhtml += '\tcolor: #6495ED;';\r\nhtml += '\tdisplay:block;';\r\nhtml += '\tborder-collapse: collapse;';\r\nhtml += '\tborder: 0px solid gray;';\r\n//    overflow: scroll;\r\nhtml += '}';\r\n\r\nhtml += '::-webkit-scrollbar{width:5px;border-left:1px solid #E6ECF8;}';\r\nhtml += '::-webkit-scrollbar-thumb{background-color:#AAAAAA;}';\r\n\r\n\r\nhtml += '.table-wrapper{';\r\nhtml += '    margin: 0px 10px 10px;';\r\nhtml += '    box-shadow: 0px 35px 50px rgba( 0, 0, 0, 0.2 );';\r\nhtml += '}';\r\n\r\nhtml += '.fl-table {';\r\nhtml += '    border-radius: 5px;';\r\nhtml += '    font-size: 12px;';\r\nhtml += '    font-weight: normal;';\r\nhtml += '    border: none;';\r\nhtml += '    border-collapse: collapse;';\r\nhtml += '    width: 100%;';\r\nhtml += '    max-width: 100%;';\r\nhtml += '    white-space: wrap;';                   /* permite quebra de linha na coluna */\r\nhtml += '    background-color: white;';\r\nhtml += '}';\r\n\r\nhtml += '.fl-table td, .fl-table th {';\r\nhtml += '    text-align: center;';\r\nhtml += '    padding: 3px;';\r\nhtml += '}';\r\n\r\nhtml += '.fl-table td {';\r\nhtml += '    border-right: 1px solid #f8f8f8;';\r\nhtml += '    border-bottom: 1px solid #f8f8f8;';\r\nhtml += '    border-top: 1px solid #f8f8f8;';\r\nhtml += '    border-left: 1px solid #f8f8f8;';\r\nhtml += '    font-size: 13px;';\r\nhtml += '}';\r\n\r\nhtml += 'thead {';\r\nhtml += '    position: sticky;';\r\nhtml += '    top: 0;';\r\nhtml += '}';\r\n\r\n\r\nhtml += '.fl-table thead th {';\r\n    \r\nhtml += '    border-right: 2px solid #f8f8f8;';\r\nhtml += '    border-bottom: 2px solid #f8f8f8;';\r\nhtml += '    border-top: 2px solid #f8f8f8;';\r\nhtml += '    border-left: 2px solid #f8f8f8;';\r\nhtml += '    position: sticky;';                   /* fixa o cabecaolho */\r\nhtml += '    top: 0;';                             /* fixa o cabecaolho */\r\nhtml += '    color: #ffffff;';                     /*cor da font das colunas de cabecalho par head */\r\nhtml += '    background: #222222;';\r\nhtml += '    font-size: 14px;';\r\nhtml += '    font-family: cursive; arial;';\r\nhtml += '    font-weight: normal;';\r\n//html += '    min-width: 95px;';\r\nhtml += '}';\r\n\r\n\r\nhtml += '.fl-table tr:nth-child(even) {';\r\nhtml += '    color: #000000;';\r\nhtml += '    background: #AAAAAA;';    /*cor fundo das colunas impares de informacoes  */\r\nhtml += '}';\r\n\r\nhtml += '.fl-table tr:nth-child(odd) {';\r\nhtml += '    color: #000000;';\r\nhtml += '    background: #BBBBBB;';    /*cor fundo das colunas pares de informacoes  */\r\nhtml += '}';\r\n\r\nhtml += '\t</style>';\r\n\r\nhtml += '\t<title>Agentes Zabbix</title>';\r\nhtml += '\t</head>';\r\n\r\nhtml += '\t<body  vlink=#000000 alink=#000000 link=#000000 bgcolor=\"#000000\">';\r\nhtml += '   <div class=\"table-container\">';\r\n    html += '   <div class=\"table-wrapper\">';\r\n    \r\n    html += '   <table class=\"fl-table\">';\r\n\r\n  \r\n    /* CONTEUDO DAS COLUNAS */\r\n    /* PROGRAMACAO  */\r\n\r\n\r\n\r\n     \r\n            /* CABECALHO DAS COLUNAS */\r\n            html += '   <thead>';\r\n            html += '   <tr>';\r\n            html += '       <td>Legenda:</td>';\r\n            html += '       <td bgcolor=#F2CC0C>Maior que 55%</td>';\r\n            html += '       <td bgcolor=#FF780A>Maior que 60%</td>';\r\n            html += '       <td bgcolor=red>Maior que 70%</td>';            \r\n            html += '   </tr>';\r\n            html += '   </thead>';\r\n    \r\n\r\n            html += '   </tr>';\r\n     \r\n\r\n\r\n\r\n\r\n    html += '   <tbody>';\r\n\r\n\r\n/*\r\n    for (let key in e08) {\r\n \r\n        html += '   <tr>';\r\n        html += '       <td>'+key+'</td>';            \r\n        html += '       <td><font color='+color[fe08[key]]+'>'+e08[key]+'% </font>(08:00)<br><font color='+color[fe12[key]]+'>'+e12[key]+'% </font>(12:00)<br><font color='+color[fe14[key]]+'>'+e14[key]+'% </font>(14:00)</td>';\r\n        html += '       <td><font color='+color[fs08[key]]+'>'+s08[key]+'% </font>(08:00)<br><font color='+color[fs12[key]]+'>'+s12[key]+'% </font>(12:00)<br><font color='+color[fs14[key]]+'>'+s14[key]+'% </font>(14:00)</td>';\r\n        html += '       <td><font color='+color[ferrin[key]]+'>'+errin[key]+'</font></td>';\r\n        html += '       <td><font color='+color[ferrout[key]]+'>'+errout[key]+'</font></td>';\r\n        html += '       <td><font color='+color[fdesin[key]]+'>'+desin[key]+'</font></td>';\r\n        html += '       <td><font color='+color[fdesout[key]]+'>'+desout[key]+'</font></td>';\r\n        //html += '       <td><font color='+color[fpro[key]]+'>'+pro[key]+'</font></td>';\r\n        html += '       <td><font color=\"#000000\">'+pro[key]+'</font></td>';\r\n        //html += '       <td><font color='+color[fcpu[key]]+'>'+cpu[key]+'</font></td>';\r\n        html += '       <td><font color=\"#000000\">'+cpu[key]+'</font></td>';\r\n        //html += '       <td><font color='+color[fmem[key]]+'>'+mem[key]+'</font></td>';\r\n        html += '       <td><font color=\"#000000\">'+mem[key]+'</font></td>';\r\n        html += '   </tr>';\r\n\r\n        \r\n    }\r\n    \r\n*/\r\n    /* FIM PROGRAMACAO  */\r\n    /* FIM CONTEUDO DAS COLUNAS */\r\n\r\n\r\n    html += '   <tbody>';\r\n\r\n\r\n    html += '   </table>';\r\n\r\n    html += '</div>';\r\n    \r\n\r\n    \r\nhtml += '</div>';\r\n\r\n//html += '<br>';\r\nhtml += '</body>';\r\nhtml += '</html>';\r\n\r\n\r\nhtmlnode.innerHTML = html;\r\n\r\n\r\n\r\n\r\n/* \r\nvar html = ' ' ;\r\nhtml += '\t<!-- Inicio do HTML -->';\r\nhtml += '\t<!DOCTYPE html>';\r\nhtml += '\t<head>';\r\nhtml += '\t<meta http-equiv=Content-Type content=text/html;charset=iso-8859-1>';\r\nhtml += '\t<style>';\r\nhtml += '\ttable {';\r\nhtml += '\t\ttable-layout: fixed;';\r\nhtml += '\t\twidth: 100%;';\r\n\r\nhtml += '\t}';\r\n\r\nhtml += '\t.table-container {';\r\nhtml += '\t    display: inline-block;';\r\n//html += '\t    width: 950px;';\r\nhtml += '\t    height: 200px;';\r\nhtml += '\t    overflow: auto;';\r\nhtml += '\t\tfont-style: normal;';\r\nhtml += '\t\tfont-family: arial;verdana;';\r\nhtml += '\t\tfont-size: 12px;';\r\nhtml += '\t\tcolor: #6495ED;';\r\nhtml += '\t\tdisplay:block;';\r\nhtml += '       border-collapse: collapse;';\r\nhtml += '\t\tborder: 2px solid gray;';\r\n//html += '\t    overflow: scroll;';\r\nhtml += '\t}';\r\n\r\nhtml += '\ttd,th {';\r\n//html += '\t\ttable-layout: auto;';\r\n//html += '\t\twidth: 100%;';\r\n//html += '\t\tfont-style: normal;';\r\n//html += '\t\tfont-family: arial;verdana;';\r\n//html += '\t\tfont-size: 12px;';\r\n//html += '\t\tcolor: #6495ED;';\r\n//html += '\t\tdisplay:block;';\r\n//html += '       border-collapse: collapse;';\r\nhtml += '\t\tborder: 1px solid gray;';\r\n//html += '\t    overflow: scroll;';\r\nhtml += '\t}';\r\n\r\n\r\n\r\n//html += '\ttable th,';\r\n//html += '\ttable td {';\r\n//html += '\t\tborder: 1px solid white;';\r\n//html += '\t    white-space: nowrap;';\r\n//html += '\t    padding: 10px 20px';\r\n//html += '\t    font-family: Arial;';\r\n//html += '\t}';\r\n\r\n//html += '\ttable tr th:first-child,';\r\n//html += '\ttable td:first-child {';\r\n//html += '\t    position: sticky;';\r\n//html += '\t    color: #6495ED;';\r\n//html += '\t    width: 100px;';\r\n//html += '\t    left: 1;';\r\n//html += '\t    z-index: 10;';\r\n//html += '\t    background: #fff;'\r\n//html += '\t}';\r\n\r\n//html += '\ttable tr th:first-child {';\r\n//html += '\t    z-index: 11;';\r\n//html += '\t}';\r\n\r\n//html += '   th tr {';\r\n//html += '\t    border: 1px solid gray;';\r\n//html += '\t    color: #6495ED;';\r\n//html += '\t    z-index: 9;';\r\n//html += '\t    background: #000;';\r\n//html += '\t}';\r\n\r\nhtml += '\t</style>';\r\n\r\nhtml += '\t<title>GDP_MPLS</title>';\r\nhtml += '\t</head>';\r\nhtml += '\t<body  vlink=#0000BC alink=#0000BC link=#0000BC bgcolor=\"#aa3aaa\">';\r\nhtml += '\t<!-- #-------------------------------------------------------------------------# -->';\r\nhtml += '\t<!-- # INICIO DA TABELA EXTERNA PARA ALINHAMENTO NO I.E.                       # -->';\r\nhtml += '\t<!-- #-------------------------------------------------------------------------# -->';\r\n\r\n//html += '<div align=\"center\"><font size=\"4\" color=\"white\" width=\"auto\">Indicadores de Desempenho </font> </div>';\r\n\r\nhtml += '<div class=\"table-container\">';\r\n\r\nhtml += '<table>';\r\n//html += '  <tbody>'; \r\n//html += '<tr  style=\"text-align: center;\"> <td colspan=16\" > <font size=\"5\"; color=\"white\";> Indicadores de Desempenho </font></td></tr>'\r\nhtml += '<tr><th>Data</th><th>Utilização<br>Entrada</th><th>Utilização<br>Saída</th><th>Erro<br>Entrada</th><th>Erro<br>Saída</th><th>Descarte<br>Entrada</th><th>Descarte<br>Saída</th><th>Propagação</th><th>CPU</th><th>Memória</th></tr>';\r\n //width=\"80px\"\r\n//########################################### ROTINA DE CARGA DE VARIÁVEIS ##################################\r\nctrl.data.forEach((item) => {\r\n     valor = item.datapoints.map((d) => d[0]);\r\n     //alert(valor)\r\n});  \r\n//-------------------------- FIM DA CARGA DE VARIÁVEIS ------------------------------------------\r\n\r\n//############################## CRIAÇÃO DAS LINHAS DE NOTICIAS  ##################################\r\n\r\n\r\nfor (var i=0; i < valor.length; i++){ \r\n        \r\n       cpm  = valor[i].split(';');\r\n       trab = cpm[14].split(',');\r\n       \r\n        for (var r=0; r < trab.length; r++){\r\n            let kk= r + 1;\r\n            if(trab[r] == 1){ color[kk] = \"#F9364D\"; } else{ color[kk] = \"white\"; }\r\n             \r\n            //alert(r  + '= '+ trab[r]  + '= '+ kk  + '= '+ color[kk] ); \r\n       }\r\n      \r\n      var tcolor = \"#D2691E\"; \r\n\r\n//alert('Pos='+ i + '  data=' + cpm[0] +'  cpu='+ cpm[1]+'  mem='+cpm[2]  +'  propagacao='+ cpm[3]+'  erro_e='+ cpm[4]+'erro_s='+ cpm[5]+'descarte_e='+ cpm[6]+'descarte_s='+ cpm[7]+'e08='+ cpm[8]+'s08='+ cpm[9]+'e12='+ cpm[10]+'s12='+ cpm[11]+'e14='+ cpm[12]+'s14='+ cpm[13]);       \r\n    html += '<tr><td align=\"center\"><font color=\"#6495ED\" > <b> ';\r\n    html += cpm[0];  \r\n    html += '</b> </font></td> <td align=\"center\"> <font color=' + color[4] + ' ><b>';\r\n    html += cpm[4];\r\n    html += '</b>%</font> <font size=\"1\" color=\"#cccccc\"> (08:00)</font> <br> <font color=' + color[6] + ' ><b> ' ;\r\n    html += cpm[6];\r\n    html += '</b>% </font> <font size=\"1\" font size=\"1\" color=\"#cccccc\">(12:00)</font> <br> <font color=' + color[8] + ' ><b>';\r\n    html += cpm[8];\r\n    html += '</b>%</font>  <font size=\"1\" font size=\"1\" color=\"#cccccc\">(14:00)</font> </td> <td align=\"center\"> <font color=' + color[5] + ' ><b>';\r\n    html += cpm[5];\r\n    html += '</b>% </font> <font size=\"1\" font size=\"1\" color=\"#cccccc\">(08:00)</font>  <br><font color=' + color[7] + ' > <b>' ;\r\n    html += cpm[7];\r\n    html += '</b>% </font> <font size=\"1\" font size=\"1\" color=\"#cccccc\">(12:00)</font>  <br> <font color=' + color[9] + ' ><b>' ;\r\n    html += cpm[9];\r\n    html += '</b>%</font>  <font size=\"1\" font size=\"1\" color=\"#cccccc\">(14:00)</font> </td> <td align=\"center\"><font color=' + color[10] + ' > <b>';\r\n    html += cpm[10];\r\n    html += '</b>%</font></td> <td align=\"center\"> <font color=' + color[11] + ' ><b>';\r\n    html += cpm[11];\r\n    html += '</b>%</font></td> <td align=\"center\"> <font color=' + color[12] + ' ><b>';\r\n    html += cpm[12];\r\n    html += '</b>% </font></font></td> <td align=\"center\"><font color=' + color[13] + ' > <b>';\r\n    html += cpm[13];\r\n    html += '</b>% </font></td> <td align=\"center\"> <font color=' + color[3] + ' ><b>';\r\n    html += cpm[3];\r\n    html += '</b>ms</font> </td> <td align=\"center\"> <font color=' + color[1] + ' ><b>';\r\n    html += cpm[1];\r\n    html += '</b>% </font></td> <td align=\"center\"> <font color=' + color[2] + ' ><b>';\r\n    html += cpm[2];\r\n    html += '</b>% </font></td></tr>';\r\n       //html += '</font></td></tr>'\r\n\r\n}\r\n//-------------------------- FIM DA CRIAÇÃO ------------------------------------------\r\n//html += '</tbody>';\r\nhtml += '</table>';\r\n\r\nhtml += '</div>';\r\n\r\n//html += '<br>';\r\nhtml += '</body>';\r\nhtml += '</html>';\r\n\r\nhtmlnode.innerHTML = html;\r\n\r\n*/",
+      "js_init_code": "",
+      "links": [],
+      "maxDataPoints": 3,
+      "nullPointMode": "connected",
+      "pluginVersion": "8.5.3",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "${DS_GDP_SUPCD}"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select concat(\r\n       ccto::text,'|'\r\n     , kbps::text,'|'\r\n     , tipo::text,'|'\r\n     , m1::text,'|'\r\n     , em1 ::text,'|'\r\n     , sm1::text,'|'\r\n     , m2::text,'|'\r\n     , em2::text,'|'\r\n     , sm2::text,'|'\r\n     , m3::text,'|'\r\n     , em3::text,'|'\r\n     , sm3::text,'|'\r\n     , mte::text,'|'\r\n     , mts::text), now() as time\r\n \r\n\r\nfrom (\r\n\r\n \r\n\r\nwith t as (\r\nselect distinct\r\n       ponto || '::' || interface as ccto\r\n     , kbps\r\n     , tipo\r\n     , mes\r\n     , (mes || '-01')::timestamp as mt\r\n     , mme::numeric(5,2) as mme\r\n     , mms::numeric(5,2) as mms\r\nfrom (\r\n  select distinct\r\n         p.nome as ponto\r\n       , r.kbps\r\n       , r.tipo\r\n       , interface, mes\r\n       , avg(mde) over (partition by t.hostname, interface, mes) as mme\r\n       , avg(mds) over (partition by t.hostname, interface, mes) as mms\r\n  from (\r\n    select hostname, interface, mes, data\r\n         , ((e08+e12+e14)/3)::numeric(5,2) as mde\r\n         , ((s08+s12+s14)/3)::numeric(5,2) as mds\r\n    from (\r\n      select upper(hostname) as hostname, interface, left(data::text,7) as mes, data\r\n           , extract(dow from data) as dow\r\n           , e08::float, e12::float, e14::float \r\n           , s08::float, s12::float, s14::float \r\n        from indicadores_desempenho_gtic \r\n       where cliente =  'MODELO'\r\n         --and data between '$inicio' and '$fim'\r\n         and data between (left((current_date - interval '3 months')::text,7) || '-01')::date and  ((left(current_date::text,7) || '-01')::date -Interval '1 day')::date \r\n       order by 1,2,3\r\n    ) t\r\n    where ((e08 > -1) or (e12 > -1) or (e14 > -1) or (s08 > -1) or (s12 > -1) or (s14 > -1))\r\n      and dow in (1,2,3,4,5)\r\n  ) t, ponto p, rede r\r\n  where (t.hostname,p.hostname,r.hostname) = (p.hostname,r.hostname,t.hostname)\r\n    and t.interface = r.iface\r\n  order by 1,2\r\n) t\r\n)\r\nselect distinct\r\n       t1.ccto\r\n     , t1.kbps\r\n     , t1.tipo\r\n     , t1.mes as m1\r\n     , t1.mme as em1 \r\n     , t1.mms as sm1\r\n     , t2.mes as m2\r\n     , t2.mme as em2\r\n     , t2.mms as sm2\r\n     , t3.mes as m3\r\n     , t3.mme as em3\r\n     , t3.mms as sm3\r\n     , ((t1.mme+t2.mme+t3.mme)/3)::numeric(5,2) as mte\r\n     , ((t1.mms+t2.mms+t3.mms)/3)::numeric(5,2) as mts\r\n  from t t1, t t2, t t3\r\nwhere (t1.ccto,t2.ccto,t3.ccto) = (t2.ccto,t3.ccto,t1.ccto)\r\n   and t1.mt < t2.mt\r\n   and t2.mt < t3.mt\r\norder by 1\r\n\r\n \r\n\r\n) t\r\nwhere mte > 5 or mts > 5",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "txbyte"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "recursoswan",
+          "timeColumn": "horario",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "transparent": true,
+      "type": "aidanmountford-html-panel"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_DB_2_ZBX_UNICO}"
+        },
+        "definition": "select left((current_date - interval '3 months')::text,7) || '-01';",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Início",
+        "multi": false,
+        "name": "inicio",
+        "options": [],
+        "query": "select left((current_date - interval '3 months')::text,7) || '-01';",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "postgres",
+          "uid": "${DS_DB_2_ZBX_UNICO}"
+        },
+        "definition": "select (((left(current_date::text,7) || '-01')::date -Interval '1 day')::date)::text",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Fim",
+        "multi": false,
+        "name": "fim",
+        "options": [],
+        "query": "select (((left(current_date::text,7) || '-01')::date -Interval '1 day')::date)::text",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "50",
+          "value": "50"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": "Percentual Desejado",
+        "multi": false,
+        "name": "percentual",
+        "options": [
+          {
+            "selected": true,
+            "text": "50",
+            "value": "50"
+          },
+          {
+            "selected": false,
+            "text": "55",
+            "value": "55"
+          },
+          {
+            "selected": false,
+            "text": "60",
+            "value": "60"
+          },
+          {
+            "selected": false,
+            "text": "65",
+            "value": "65"
+          },
+          {
+            "selected": false,
+            "text": "70",
+            "value": "70"
+          },
+          {
+            "selected": false,
+            "text": "75",
+            "value": "75"
+          }
+        ],
+        "query": "50, 55, 60, 65, 70, 75",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": true
+  },
+  "timezone": "",
+  "title": "OcupacaoBandaTrimestralMODELO",
+  "uid": "OcupacaoBandaTrimestralMODELO",
+  "version": 2,
+  "weekStart": ""
+}
