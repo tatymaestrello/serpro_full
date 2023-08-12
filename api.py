@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 import requests
 import json
 from flask import request
@@ -185,6 +186,7 @@ def importar_dashboard(nome_arq_json,cliente,folderId,folderUid,path,flag_menupo
     return "Erro: Arquivo dashboard '"+nome_arq_json+"' não encontrado."
 #----------------------------------------------------------------------------------------
 
+from app import app
 
 # ***** API criar cliente ***************************************************************
 @app.route('/criar_cliente',methods=['POST'])
@@ -192,8 +194,7 @@ def criar_cliente():
     # pegando os dados enviados à API
     dados_req = request.get_json()
     return criar_cliente(dados_req)
-
-
+        
 #service
 def process_client(dados_req):
     lista_msg_resposta = []
@@ -222,7 +223,7 @@ def process_client(dados_req):
 
         lista_codigos_menu = []
         lista_nomes_dashboards = []
-        # pegandos as chaves dos dics do JSON   
+        # pegandos as chaves dos dics do JSON
         for obj_dict in dicts_dashboards:
             lista_keys = obj_dict.keys()
             for dado in lista_keys:
@@ -285,4 +286,3 @@ def process_client(dados_req):
     else:
         return "Erro: Pasta '"+cliente+"' não encontrada: "+json.dumps(resp_pasta_grafana)
 # ***************************************************************************************
-

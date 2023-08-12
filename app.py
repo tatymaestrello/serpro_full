@@ -4,8 +4,8 @@ from flask import Flask
 # https://pythonbasics.org/flask-upload-file/
 
 app = Flask(__name__)
-
 from views import *
+from api import criar_cliente
 
 # /// = relative path, //// = absolute path
 app.config['UPLOAD_FOLDER'] = './uploaded_files/'

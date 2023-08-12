@@ -94,21 +94,6 @@ a:hover {
   margin: 0;
 }
 
-.field-group {
-  display: flex;
-  flex-flow: column;
-}
-
-.field>label {
+.field > label {
   display: inline !important;
-}
-
-.field-group>.field+label {
-  display: block;
-  margin-left: 3rem !important;
-}
-
-.field>.field {
-  /* display: block; */
-  margin-left: 3rem !important;
 }
