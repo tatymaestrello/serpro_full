@@ -1,5 +1,9 @@
+Content summary
+- [1. Setup](#1-setup)
+- [2. Using python-dotenv](#2-using-python-dotenv)
 
-### Setup
+
+## 1. Setup
 Create project with virtual environment
 
 ```console
@@ -39,3 +43,24 @@ Run the app
 ```console
 $ flask run
 ```
+
+
+## 2. Using python-dotenv
+python-dotenv to manage environmints in a file
+
+see mor in: https://pypi.org/project/python-dotenv/
+
+Common cli list:
+List the env variables
+```console
+$ dotenv list
+```
+Set USER value
+```console
+$ dotenv set USER foo
+```
+Get stored value
+```console
+$ dotenv get USER
+```
+

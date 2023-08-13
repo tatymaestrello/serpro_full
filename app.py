@@ -3,6 +3,9 @@ from flask import Flask
 # https://flask.palletsprojects.com/en/2.3.x/quickstart/
 # https://pythonbasics.org/flask-upload-file/
 
+from dotenv import load_dotenv
+load_dotenv()
+
 app = Flask(__name__)
 from views import *
 from api import criar_cliente
