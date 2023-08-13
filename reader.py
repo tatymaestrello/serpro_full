@@ -14,17 +14,22 @@ def readOption(dashboards, option):
             try:
                 level1 = level0[value]
             except Exception:
-                level1 = level0[value] = {}
-                level1 = level0[value]
+                leaf = value.split("|")
+                if len(leaf) == 1:
+                    level1 = level0[value] = {}
+                    level1 = level0[value]
+                else:
+                    level0[leaf[0]] = leaf[1]
 
             if len(dict) >= 3:
                 value = value = dict[2]
                 try:
                     level2 = level1[value]
                 except Exception:
-                    dict = value.split("|")
+                    leaf = value.split("|")
                     if len(dict) > 1:
-                        level1[dict[0]] = dict[1]
+                        level1[leaf[0]] = leaf[1]
+
 
 def readOptions(options):
     dashs = {}
@@ -32,14 +37,14 @@ def readOptions(options):
         readOption(dashs, x)
     return dashs
 
-"""
 
-options = [
-    "ARLD00000",
-    "ARLD00000:ARLD00300:ARLD00300|InformacoesCircuitosRoteadoresMODELO",
-    "ARLD00000:ARLD00300:ARLD00301|IndicadoresDesempenhoWANNacionalMODELO",
-]
+def test():
+    options = [
+        "ARLD00000",
+        "ARLD00000:ARLD00200|InformacoesCircuitosRoteadoresMODELO",
+        "ARLD00000:ARLD00300:ARLD00300|InformacoesCircuitosRoteadoresMODELO",
+        "ARLD00000:ARLD00300:ARLD00301|IndicadoresDesempenhoWANNacionalMODELO",
+    ]
 
-print(readOptions(options))
-
-"""
+    print(readOptions(options))
+# test()
