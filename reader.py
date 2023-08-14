@@ -1,3 +1,4 @@
+import json
 def readOption(dashboards, option):
     dict = option.split(":")
     if len(dict) >= 1:
@@ -31,7 +32,7 @@ def readOption(dashboards, option):
                     leaf = value.split("|")
                     if len(dict) > 1:
                         level2[leaf[0]] = leaf[1]
-    return dashboards
+    return json.loads(json.dumps(dashboards))
 
 
 def readOptions(options):

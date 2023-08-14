@@ -18,7 +18,7 @@ def home():
 def add():
     print(request.form)
     createfolder = request.form.get("createfolder")
-    if createfolder == "checked":
+    if createfolder == "yes":
         createfolder = "S"
     else:
         createfolder = "N"
