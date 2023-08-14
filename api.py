@@ -16,7 +16,7 @@ from os import environ
 url = environ.get("GRAFANA_URL")
 username = environ.get("GRAFANA_USERNAME")
 password = environ.get("GRAFANA_PASSWORD")
-verify_ssl = environ.get("VERIFY_SSL", 'true') == 'true'
+verify_ssl = environ.get("VERIFY_SSL", "true") == "true"
 # path pasta MODELO
 path_modelo = "MODELO/"
 
@@ -284,44 +284,36 @@ def process_client(dados_req):
 
         lista_codigos_menu = []
         lista_nomes_dashboards = []
+
+        print("dicts_dashboards")
+        print(json.dumps(dicts_dashboards))
+
         # pegandos as chaves dos dics do JSON
-        for obj_dict in dicts_dashboards:
-            lista_keys = obj_dict.keys()
-            for dado in lista_keys:
-                # pegado os códigos dos itens de menu principal
-                key = json.loads(json.dumps(dado))
-                lista_codigos_menu.append(key)
-                lista_itens_prin = obj_dict.get(key)
-                # percorre os dics do primeiro nível
-                for dados_ip in lista_itens_prin:
-                    lista_itens_sec = json.loads(json.dumps(dados_ip))
-                    # segundo nível
-                    if type(lista_itens_sec) is dict:
-                        lista_keys_ter = lista_itens_sec.keys()
-                        for dado_ter in lista_keys_ter:
-                            # terceiro nível
-                            key_ter = json.loads(json.dumps(dado_ter))
-                            lista_codigos_menu.append(key_ter)
-                            lista_itens_ter = lista_itens_sec.get(key_ter)
-                            if type(lista_itens_ter) is str:
-                                lista_nomes_dashboards.append(lista_itens_ter)
-                            else:
-                                for itens_ter in lista_itens_ter:
-                                    if type(itens_ter) is list and itens_ter != []:
-                                        lista_codigos_menu.append(itens_ter[0])
-                                        lista_nomes_dashboards.append(itens_ter[1])
-                    else:
-                        if type(lista_itens_sec) is list and lista_itens_sec != []:
-                            lista_codigos_menu.append(lista_itens_sec[0])
-                            if type(lista_itens_sec[1]) is str:
-                                lista_nomes_dashboards.append(lista_itens_sec[1])
-                            else:
-                                lista_itens_ter = json.loads(
-                                    json.dumps(lista_itens_sec[1])
-                                )
-                                # terceiro nível
-                                for dados_sec in lista_itens_ter:
-                                    lista_nomes_dashboards.append(dados_sec)
+        for level0 in dicts_dashboards.keys():
+            # pegado os códigos dos itens de menu principal
+            lista_codigos_menu.append(level0)
+            dado0 = dicts_dashboards.get(level0)
+            # percorre os dics do primeiro nível
+            if type(dado0) is str:
+                lista_nomes_dashboards.append(dado0)
+            else: 
+                for level1 in dado0.keys():
+                    lista_codigos_menu.append(level1)
+                    dado1 = dado0.get(level1)
+                    # percorre os dics do primeiro nível
+                    if type(dado1) is str:
+                        lista_nomes_dashboards.append(dado1)
+                    else: 
+                        for level2 in dado1.keys():
+                            lista_codigos_menu.append(level2)
+                            dado2 = dado1.get(level2)
+                            # percorre os dics do primeiro nível
+                            if type(dado2) is str:
+                                lista_nomes_dashboards.append(dado2)
+                            else: 
+                                for level3 in dado2.keys():
+                                    lista_codigos_menu.append(level3)
+                                    dado3 = dado2.get(level3)
 
         # removendo os codigos de menu duplicados
         lista_codigos_menu_final = []

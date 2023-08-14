@@ -35,7 +35,7 @@ def add():
     result = process_client(requestData)
     print("Receiving response")
     print(result)
-    return render_template("added.html", result=result)
+    return render_template("added.html", result=json.dumps(result, indent=4))
 
 
 @app.errorhandler(404)
