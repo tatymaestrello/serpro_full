@@ -16,7 +16,7 @@ from os import environ
 url = environ.get("GRAFANA_URL")
 username = environ.get("GRAFANA_USERNAME")
 password = environ.get("GRAFANA_PASSWORD")
-VERIFY_SSL = environ.get("VERIFY_SSL", False)
+verify_ssl = environ.get("VERIFY_SSL", 'true') == 'true'
 # path pasta MODELO
 path_modelo = "MODELO/"
 
@@ -103,7 +103,7 @@ def criar_nova_pasta(cliente):
         url=url + "folders",
         json=dados_nova_pasta,
         auth=(username, password),
-        verify=VERIFY_SSL,
+        verify=verify_ssl,
     )
     resp_nova_pasta = json.loads(response.content)
     # em resp_nova_pasta tem o JSON dos dados da pasta criada
@@ -116,7 +116,7 @@ def criar_nova_pasta(cliente):
 def buscar_dados_pasta(cliente):
     # chama a API do grafana para obter os dados da pasta do cliente
     response = requests.get(
-        url=url + "folders/" + cliente, auth=(username, password), verify=VERIFY_SSL
+        url=url + "folders/" + cliente, auth=(username, password), verify=verify_ssl
     )
     resp_pasta_grafana = json.loads(response.content)
     # em resp_pasta_grafa tem o JSON dos dados da pastas
@@ -216,7 +216,7 @@ def importar_dashboard(
             url=url + "dashboards/import",
             json=dados_dashboard,
             auth=(username, password),
-            verify=VERIFY_SSL,
+            verify=verify_ssl,
         )
         # resposta da API do grafana
         resp_novo_dashboard = json.loads(response.content)
