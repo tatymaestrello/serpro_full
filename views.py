@@ -8,7 +8,7 @@ from reader import readOptions
 
 @app.route("/")
 def home():
-    menu = open("menu.json", mode="r").read()
+    menu = open("menu.json", mode="r", encoding="utf-8").read()
     print(menu)
     reports = json.loads(menu)
     return render_template("base.html", reports=reports)

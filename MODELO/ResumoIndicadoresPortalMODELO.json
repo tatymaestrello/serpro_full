@@ -1,0 +1,1467 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": false,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 59,
+  "links": [
+    {
+      "icon": "dashboard",
+      "tags": [],
+      "title": "MAPA",
+      "tooltip": "",
+      "type": "link",
+      "url": "d/MapaVisaoGeralPortalmodelo/mapavisaogeralportalmodelo?orgId=1&var-uf=$uf"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "PB0A00C9697F027B9"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 20,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "rx"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Recepção"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tx"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Transmissão"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "application": {
+            "filter": ""
+          },
+          "countTriggersBy": "",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "PB0A00C9697F027B9"
+          },
+          "functions": [
+            {
+              "added": true,
+              "def": {
+                "category": "Alias",
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ],
+                "name": "replaceAlias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ]
+              },
+              "params": [
+                "/.*(Entrada|Saída).*/",
+                "$1"
+              ],
+              "text": "replaceAlias(/(.*)/, $1)"
+            }
+          ],
+          "group": {
+            "filter": "/WAN/modelo/"
+          },
+          "host": {
+            "filter": "/$zabbix/"
+          },
+          "item": {
+            "filter": "/^Tráfego_.*(Entrada|Saída).*$interface .*$circuito.*/"
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "options": {
+            "count": false,
+            "disableDataAlignment": false,
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "useTrends": "default",
+            "useZabbixValueMapping": false
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "queryType": "0",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "schema": 12,
+          "table": {
+            "skipEmptyValues": false
+          },
+          "tags": {
+            "filter": ""
+          },
+          "textFilter": "",
+          "trigger": {
+            "filter": ""
+          }
+        }
+      ],
+      "title": "Utilização do Circuito $circuito - $velocidade",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "PB0A00C9697F027B9"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "value"
+            },
+            "properties": [
+              {
+                "id": "mappings",
+                "value": [
+                  {
+                    "options": {
+                      "0": {
+                        "text": "   0%   "
+                      }
+                    },
+                    "type": "value"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "text": {
+          "valueSize": 14
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "application": {
+            "filter": ""
+          },
+          "countTriggersBy": "",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "PB0A00C9697F027B9"
+          },
+          "functions": [],
+          "group": {
+            "filter": "/WAN/modelo/"
+          },
+          "host": {
+            "filter": "/$zabbix/"
+          },
+          "item": {
+            "filter": "CPU - % Utilização"
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "options": {
+            "count": false,
+            "disableDataAlignment": false,
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "useTrends": "default",
+            "useZabbixValueMapping": false
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "queryType": "0",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "schema": 12,
+          "table": {
+            "skipEmptyValues": false
+          },
+          "tags": {
+            "filter": ""
+          },
+          "textFilter": "",
+          "trigger": {
+            "filter": ""
+          }
+        }
+      ],
+      "title": "CPU",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "PB0A00C9697F027B9"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "value"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Tempo (ms)"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 15,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [
+            "min",
+            "mean",
+            "max",
+            "last"
+          ],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.1.2",
+      "targets": [
+        {
+          "application": {
+            "filter": ""
+          },
+          "countTriggersBy": "",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "PB0A00C9697F027B9"
+          },
+          "functions": [
+            {
+              "added": true,
+              "def": {
+                "category": "Alias",
+                "defaultParams": [
+                  "/(.*)/",
+                  "$1"
+                ],
+                "name": "replaceAlias",
+                "params": [
+                  {
+                    "name": "regexp",
+                    "type": "string"
+                  },
+                  {
+                    "name": "newAlias",
+                    "type": "string"
+                  }
+                ]
+              },
+              "params": [
+                "/.*(Tempo de Resposta).*/",
+                "$1"
+              ],
+              "text": "replaceAlias(/(.*)/, $1)"
+            }
+          ],
+          "group": {
+            "filter": "/WAN/modelo/"
+          },
+          "host": {
+            "filter": "/$zabbix/"
+          },
+          "item": {
+            "filter": "ICMP - Tempo de Resposta"
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "options": {
+            "count": false,
+            "disableDataAlignment": false,
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "useTrends": "default",
+            "useZabbixValueMapping": false
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "queryType": "0",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "schema": 12,
+          "table": {
+            "skipEmptyValues": false
+          },
+          "tags": {
+            "filter": ""
+          },
+          "textFilter": "",
+          "trigger": {
+            "filter": ""
+          }
+        }
+      ],
+      "title": "Tempo de Resposta",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "alexanderzobnin-zabbix-datasource",
+        "uid": "PB0A00C9697F027B9"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 4
+      },
+      "id": 13,
+      "options": {
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": true,
+        "showThresholdMarkers": true,
+        "text": {
+          "valueSize": 14
+        }
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "application": {
+            "filter": ""
+          },
+          "countTriggersBy": "",
+          "datasource": {
+            "type": "alexanderzobnin-zabbix-datasource",
+            "uid": "PB0A00C9697F027B9"
+          },
+          "functions": [],
+          "group": {
+            "filter": "/WAN/modelo/"
+          },
+          "host": {
+            "filter": "/$zabbix/"
+          },
+          "item": {
+            "filter": "Memória - % Utilização"
+          },
+          "itemTag": {
+            "filter": ""
+          },
+          "macro": {
+            "filter": ""
+          },
+          "options": {
+            "count": false,
+            "disableDataAlignment": false,
+            "showDisabledItems": false,
+            "skipEmptyValues": false,
+            "useTrends": "default",
+            "useZabbixValueMapping": false
+          },
+          "proxy": {
+            "filter": ""
+          },
+          "queryType": "0",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "schema": 12,
+          "table": {
+            "skipEmptyValues": false
+          },
+          "tags": {
+            "filter": ""
+          },
+          "textFilter": "",
+          "trigger": {
+            "filter": ""
+          }
+        }
+      ],
+      "title": "Memória",
+      "type": "gauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P5CE02A74F6407BED"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 2,
+          "links": [
+            {
+              "title": "Detalhamento",
+              "url": "d/DetalhamentoIPmodelo/detalhamentoipmodelo?orgId=1&refresh=5m&var-ip=${__data.fields[0]}&var-idponto=$idponto&var-uf=$uf&var-localidade=$localidade&${__url_time_range}&${circuito:queryparam}&${instancia:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "origem"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "IP"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "BYTES"
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "origem"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      "id": 11,
+      "links": [],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P5CE02A74F6407BED"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select origem as \"LAN\", sum(bytes) as Bytes from fluxomodelo where \n        $__timeFilter(horario) \n    and id_ponto = $idponto \n    and sentido = 'tx' \n    --and indextx = '$instancialan' \n    and indexrx ~ '^$instancia$'\n    and indexrx != '0'\n    group by 1 order by 2 desc limit 10",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Falantes Tx - LAN",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true
+            },
+            "indexByName": {},
+            "renameByName": {
+              "id": ""
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P5CE02A74F6407BED"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "targetBlank": false,
+              "title": "Detalha ${__data.fields.tag}",
+              "url": "d/DetalhamentoAplicacaomodelo/detalhamentoaplicacaomodelo?orgId=1&refresh=5m&var-localidade=${localidade}&var-idponto=${idponto}&var-servico=${__data.fields.tag}&var-aplicacao=${__data.fields.tag}&${__url_time_range}&${uf:queryparam}&${instancia:queryparam}&${circuito:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "perc"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      "id": 10,
+      "options": {
+        "displayMode": "lcd",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {
+          "titleSize": 10
+        },
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P5CE02A74F6407BED"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select tag, (bytes/($totaltx+1))*100 as perc from (select distinct tag, sum(bytes) over (partition by tag,sentido) as bytes from fluxomodelo where $__timeFilter(horario) and id_ponto = '$idponto' and indexrx ~ '^$instancia$' and sentido = 'tx'  order by bytes desc limit 10) t",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Serviços TX",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P5CE02A74F6407BED"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 2,
+          "links": [
+            {
+              "title": "Detalhamento",
+              "url": "d/DetalhamentoIPmodelo/detalhamentoipmodelo?orgId=1&refresh=5m&var-ip=${__data.fields[0]}&var-idponto=$idponto&var-uf=$uf&var-localidade=$localidade&${__url_time_range}&${instancia:queryparam}&${circuito:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "deckbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "destino"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "IP"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "bytes"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "BYTES"
+              },
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 8
+      },
+      "id": 14,
+      "links": [],
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P5CE02A74F6407BED"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select destino as \"LAN\", sum(bytes) as Bytes from fluxomodelo where \n        $__timeFilter(horario) \n    and id_ponto = $idponto \n    and sentido = 'rx' \n    and indextx ~ '^$instancia$'\n    and indextx != '0'\n    group by 1 order by 2 desc limit 10",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Falantes Rx - LAN",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "id": true
+            },
+            "indexByName": {},
+            "renameByName": {}
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "postgres",
+        "uid": "P5CE02A74F6407BED"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "links": [
+            {
+              "targetBlank": false,
+              "title": "Detalha ${__data.fields.tag}",
+              "url": "d/DetalhamentoAplicacaomodelo/detalhamentoaplicacaomodelo?orgId=1&refresh=5m&var-localidade=${localidade}&var-idponto=${idponto}&var-servico=${__data.fields.tag}&var-aplicacao=${__data.fields.tag}&${__url_time_range}&${uf:queryparam}&${instancia:queryparam}&${circuito:queryparam}"
+            }
+          ],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "perc"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 8
+      },
+      "id": 15,
+      "options": {
+        "displayMode": "lcd",
+        "minVizHeight": 10,
+        "minVizWidth": 0,
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {
+          "titleSize": 10
+        },
+        "valueMode": "color"
+      },
+      "pluginVersion": "10.0.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "P5CE02A74F6407BED"
+          },
+          "format": "table",
+          "group": [],
+          "metricColumn": "none",
+          "rawQuery": true,
+          "rawSql": "select tag, (bytes/($totalrx+1))*100 as perc from (select distinct tag, sum(bytes) over (partition by tag,sentido) as bytes from fluxomodelo where $__timeFilter(horario) and id_ponto = '$idponto' and indextx ~ '^$instancia$' and sentido = 'rx'  order by bytes desc limit 10) t",
+          "refId": "A",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_erro"
+                ],
+                "type": "column"
+              }
+            ]
+          ],
+          "table": "relatorio_indicadores_wan",
+          "timeColumn": "data",
+          "timeColumnType": "timestamp",
+          "where": [
+            {
+              "name": "$__timeFilter",
+              "params": [],
+              "type": "macro"
+            }
+          ]
+        }
+      ],
+      "title": "Serviços RX",
+      "type": "bargauge"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "SP",
+          "value": "SP"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select distinct uf from utilizacaoelipsemodelo where cliente ~* 'modelo' order by uf",
+        "hide": 0,
+        "includeAll": false,
+        "label": "UF",
+        "multi": false,
+        "name": "uf",
+        "options": [],
+        "query": "select distinct uf from utilizacaoelipsemodelo where cliente ~* 'modelo' order by uf",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "SP-modelo_ALF_AEROPORTO_INT-GUARULHOS-SP-SPGRSmodeloCE000006_20M",
+          "value": "SP-modelo_ALF_AEROPORTO_INT-GUARULHOS-SP-SPGRSmodeloCE000006_20M"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select p.nome from ponto p, cliente c where substring(p.id::text,1,4) = c.id::text and c.sigla = 'modelo' and substring(p.nome::text,1,2) = '$uf' order by 1;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Localidade",
+        "multi": false,
+        "name": "localidade",
+        "options": [],
+        "query": "select p.nome from ponto p, cliente c where substring(p.id::text,1,4) = c.id::text and c.sigla = 'modelo' and substring(p.nome::text,1,2) = '$uf' order by 1;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "SPGRSmodeloCE000006",
+          "value": "SPGRSmodeloCE000006"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select p.hostname from  ponto p where  p.nome = '$localidade'",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Zabbix",
+        "multi": false,
+        "name": "zabbix",
+        "options": [],
+        "query": "select p.hostname from  ponto p where  p.nome = '$localidade'",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "1000110027",
+          "value": "1000110027"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select p.id from ponto p where p.hostname ~* '$zabbix'",
+        "hide": 2,
+        "includeAll": false,
+        "label": "IdPonto",
+        "multi": false,
+        "name": "idponto",
+        "options": [],
+        "query": "select p.id from ponto p where p.hostname ~* '$zabbix'",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "ACESSO",
+          "value": "ACESSO"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select distinct\n       case when temwanmais = 0 and temwan = 0 then 'ACESSO'\n            when temwanmais = 0 and temwan > 0 then tipo\n            else tipo\n        end as tipo\nfrom (\n     select distinct\n            tipo\n          , sum(contawanmais) over (partition by 0) as temwanmais\n          , sum(contawan) over (partition by 0) as temwan\n     from (\n          select tipo\n               , posicao\n               , case when tipo ~ 'WANMAIS'\n                      then 1\n                      else 0\n                  end as contawanmais\n               , case when tipo = 'WAN'\n                      then 1\n                      else 0\n                  end as contawan\n            from rede\n           where id::text ~ '^$idponto'\n     ) t\n) t;",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Circuito",
+        "multi": false,
+        "name": "circuito",
+        "options": [],
+        "query": "select distinct\n       case when temwanmais = 0 and temwan = 0 then 'ACESSO'\n            when temwanmais = 0 and temwan > 0 then tipo\n            else tipo\n        end as tipo\nfrom (\n     select distinct\n            tipo\n          , sum(contawanmais) over (partition by 0) as temwanmais\n          , sum(contawan) over (partition by 0) as temwan\n     from (\n          select tipo\n               , posicao\n               , case when tipo ~ 'WANMAIS'\n                      then 1\n                      else 0\n                  end as contawanmais\n               , case when tipo = 'WAN'\n                      then 1\n                      else 0\n                  end as contawan\n            from rede\n           where id::text ~ '^$idponto'\n     ) t\n) t;",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "GigabitEthernet0/0/2",
+          "value": "GigabitEthernet0/0/2"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select iface from rede where hostname ~* '$zabbix' and tipo = '$circuito' order by 1 desc",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Interface",
+        "multi": false,
+        "name": "interface",
+        "options": [],
+        "query": "select iface from rede where hostname ~* '$zabbix' and tipo = '$circuito' order by 1 desc",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "3",
+          "value": "3"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select distinct  \n       case when temwanmais = 0 and (tipo = 'ACESSO') then '[0-9].*'\n            when temwanmais = 0 and temwan > 0   then '[0-9].*' \n            when temwanmais > 0 and tipo = 'LAN' then '[0-9].*' \n            when temwanmais > 0 and tipo != 'LAN' then posicao  \n       end as instancia \nfrom (\n     select tipo, posicao, iface, sum(contawanmais) over (partition by 0) as temwanmais, sum(contawan) over (partition by 0) as temwan \n     from (\n          select tipo\n                 , posicao\n                 , iface\n                 , case when tipo ~ 'WANMAIS' \n                        then 1 \n                        else 0 \n                 end as contawanmais\n                 , case when tipo = 'WAN' \n                        then 1 \n                        else 0 \n                 end as contawan  \n         from rede where id::text ~ '^$idponto' \n     ) t\n) t where tipo = '$circuito'  and iface = '$interface';\n",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Instancia",
+        "multi": false,
+        "name": "instancia",
+        "options": [],
+        "query": "select distinct  \n       case when temwanmais = 0 and (tipo = 'ACESSO') then '[0-9].*'\n            when temwanmais = 0 and temwan > 0   then '[0-9].*' \n            when temwanmais > 0 and tipo = 'LAN' then '[0-9].*' \n            when temwanmais > 0 and tipo != 'LAN' then posicao  \n       end as instancia \nfrom (\n     select tipo, posicao, iface, sum(contawanmais) over (partition by 0) as temwanmais, sum(contawan) over (partition by 0) as temwan \n     from (\n          select tipo\n                 , posicao\n                 , iface\n                 , case when tipo ~ 'WANMAIS' \n                        then 1 \n                        else 0 \n                 end as contawanmais\n                 , case when tipo = 'WAN' \n                        then 1 \n                        else 0 \n                 end as contawan  \n         from rede where id::text ~ '^$idponto' \n     ) t\n) t where tipo = '$circuito'  and iface = '$interface';\n",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select (sum(bytes)) as total from fluxomodelo where $__timeFilter(horario) and id_ponto = $idponto and sentido = 'tx' and indexrx ~ '^$instancia$'",
+        "hide": 2,
+        "includeAll": false,
+        "label": "totaltx",
+        "multi": false,
+        "name": "totaltx",
+        "options": [],
+        "query": "select (sum(bytes)) as total from fluxomodelo where $__timeFilter(horario) and id_ponto = $idponto and sentido = 'tx' and indexrx ~ '^$instancia$'",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "",
+          "value": ""
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select (sum(bytes)) as total from fluxomodelo where $__timeFilter(horario) and id_ponto = $idponto and sentido = 'rx'  and indextx ~ '^$instancia$'",
+        "hide": 2,
+        "includeAll": false,
+        "label": "totalrx",
+        "multi": false,
+        "name": "totalrx",
+        "options": [],
+        "query": "select (sum(bytes)) as total from fluxomodelo where $__timeFilter(horario) and id_ponto = $idponto and sentido = 'rx'  and indextx ~ '^$instancia$'",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "20000 Kbps",
+          "value": "20000 Kbps"
+        },
+        "datasource": {
+          "type": "postgres",
+          "uid": "P5CE02A74F6407BED"
+        },
+        "definition": "select \n    case when kbps > 0 \n        then concat(kbps,' ','Kbps') \n        else null \n    end   from rede where \n              hostname ~* '$zabbix' \n      and tipo = '$circuito' order by 1 desc",
+        "hide": 2,
+        "includeAll": false,
+        "label": "Velocidade",
+        "multi": false,
+        "name": "velocidade",
+        "options": [],
+        "query": "select \n    case when kbps > 0 \n        then concat(kbps,' ','Kbps') \n        else null \n    end   from rede where \n              hostname ~* '$zabbix' \n      and tipo = '$circuito' order by 1 desc",
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": [
+      "5m",
+      "15m",
+      "30m"
+    ]
+  },
+  "timezone": "",
+  "title": "ResumoIndicadoresPortalmodelo",
+  "uid": "ResumoIndicadoresPortalmodelo",
+  "version": 1,
+  "weekStart": ""
+}

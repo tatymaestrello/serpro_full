@@ -7,12 +7,12 @@ import os
 from os import environ
 
 # url do grafana
-# url = "http://localhost:3000/api/"
+#url = "http://localhost:3000/api/"
 # TODO get value from os.environ("URL_GRAFANA")
 
 # usuário do grafana
-# Username = "admin"
-# Passord = "@a12345z_"
+#username = "admin"
+#password = "@a12345z_"
 url = environ.get("GRAFANA_URL")
 username = environ.get("GRAFANA_USERNAME")
 password = environ.get("GRAFANA_PASSWORD")
@@ -251,7 +251,7 @@ from app import app
 def criar_cliente():
     # pegando os dados enviados à API
     dados_req = request.get_json()
-    return criar_cliente(dados_req)
+    return process_client(dados_req)
 
 
 # service
@@ -268,9 +268,7 @@ def process_client(dados_req):
         # obtendo os dados da pasta já existente no grafana
         resp_pasta_grafana = buscar_dados_pasta(cliente)
 
-    if (
-        resp_pasta_grafana.get("title") == cliente
-    ):  # pasta criada corretamente ou já existente
+    if resp_pasta_grafana.get("title") == cliente:  # pasta criada corretamente ou já existente
         if criar_pasta == "S":
             lista_msg_resposta.append("Ok: Pasta '" + cliente + "' criada com sucesso!")
         else:
